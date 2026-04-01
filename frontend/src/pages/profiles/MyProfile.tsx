@@ -341,75 +341,7 @@ export default function MyProfile() {
             </Card>
           ),
         },
-        // Teams & Reporting — read-only for employees, editable for admins
-        ...(user?.roles?.some((r: any) => ['super admin', 'Admin', 'Hr Manager'].includes(r.name)) ? [{
-          key: 'teams', label: 'Teams & Reporting', icon: <ApartmentOutlined />,
-          children: (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-              {/* My Teams */}
-              <Card title="My Teams" style={{ borderRadius: 12 }}
-                extra={<Button icon={<PlusOutlined />} type="primary" size="small" onClick={() => setTeamModal(true)}>Add Team</Button>}>
-                {(myTeamsData?.teams || []).length === 0 ? <span style={{ color: '#8c8c8c' }}>No teams assigned</span> :
-                  (myTeamsData?.teams || []).map((t: any) => (
-                    <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f5f5f5' }}>
-                      <div>
-                        <Tag color={t.isPrimary ? 'blue' : 'default'}>{t.teamName}</Tag>
-                        {t.roleInTeam && <span style={{ fontSize: 12, color: '#666' }}>{t.roleInTeam}</span>}
-                        {t.isPrimary && <Tag color="gold" style={{ fontSize: 10, marginLeft: 4 }}>Primary</Tag>}
-                      </div>
-                      <Popconfirm title="Remove?" onConfirm={() => removeTeamMut.mutate(t.id)}>
-                        <DeleteOutlined className="action-delete" />
-                      </Popconfirm>
-                    </div>
-                  ))
-                }
-                <Modal title="Add Team" open={teamModal} onCancel={() => setTeamModal(false)} onOk={() => teamForm.submit()}>
-                  <Form form={teamForm} onFinish={(v: any) => addTeamMut.mutate(v)} layout="vertical" className="clean-form" style={{ marginTop: 16 }}>
-                    <Form.Item name="teamId" label="Team" rules={[{ required: true }]}>
-                      <Select showSearch optionFilterProp="label" placeholder="-- Choose --"
-                        options={(teams || []).map((t: any) => ({ label: t.teamName, value: t.id }))} />
-                    </Form.Item>
-                    <Form.Item name="roleInTeam" label="Your Role in Team">
-                      <Input placeholder="e.g. Software Developer, Team Lead" />
-                    </Form.Item>
-                    <Form.Item name="isPrimary" label="Primary Team?" initialValue={false}>
-                      <Select options={[{ label: 'No', value: false }, { label: 'Yes', value: true }]} />
-                    </Form.Item>
-                  </Form>
-                </Modal>
-              </Card>
-
-              {/* My Managers */}
-              <Card title="I Report To" style={{ borderRadius: 12 }}
-                extra={<Button icon={<PlusOutlined />} type="primary" size="small" onClick={() => setMgrModal(true)}>Add Manager</Button>}>
-                {(myTeamsData?.managers || []).length === 0 ? <span style={{ color: '#8c8c8c' }}>No manager assigned</span> :
-                  (myTeamsData?.managers || []).map((m: any) => (
-                    <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f5f5f5' }}>
-                      <div>
-                        <strong>{m.managerName || m.managerUsername}</strong>
-                        {m.isPrimary && <Tag color="gold" style={{ fontSize: 10, marginLeft: 8 }}>Primary</Tag>}
-                      </div>
-                      <Popconfirm title="Remove?" onConfirm={() => removeMgrMut.mutate(m.id)}>
-                        <DeleteOutlined className="action-delete" />
-                      </Popconfirm>
-                    </div>
-                  ))
-                }
-                <Modal title="Add Manager" open={mgrModal} onCancel={() => setMgrModal(false)} onOk={() => mgrForm.submit()}>
-                  <Form form={mgrForm} onFinish={(v: any) => addMgrMut.mutate(v)} layout="vertical" className="clean-form" style={{ marginTop: 16 }}>
-                    <Form.Item name="managerId" label="Manager" rules={[{ required: true }]}>
-                      <Select showSearch optionFilterProp="label" placeholder="-- Choose --"
-                        options={(allUsers?.items || []).map((u: any) => ({ label: u.displayName || u.username, value: u.id }))} />
-                    </Form.Item>
-                    <Form.Item name="isPrimary" label="Primary Manager?" initialValue={false}>
-                      <Select options={[{ label: 'No', value: false }, { label: 'Yes', value: true }]} />
-                    </Form.Item>
-                  </Form>
-                </Modal>
-              </Card>
-            </div>
-          ),
-        }] : []),
+        // Teams & Reporting removed — managed via Employee Management page by admins/leads
         {
           key: 'password', label: 'Reset Password', icon: <LockOutlined />,
           children: (
@@ -427,11 +359,7 @@ export default function MyProfile() {
             </Card>
           ),
         },
-        // Request Changes — only for admins/HR
-        ...(user?.roles?.some((r: any) => ['super admin', 'Admin', 'Hr Manager'].includes(r.name)) ? [{
-          key: 'changes', label: 'Manage Changes', icon: <SwapOutlined />,
-          children: <ProfileChangeTab userId={user?.id} />,
-        }] : []),
+        // Profile Changes removed — use Employee Management page instead
       ]} />
     </div>
   );

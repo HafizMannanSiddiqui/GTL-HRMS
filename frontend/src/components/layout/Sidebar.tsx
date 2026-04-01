@@ -78,7 +78,6 @@ export default function Sidebar({ collapsed, onCollapse }: Props) {
       { key: '/admin/ghost-employees', icon: <UserOutlined />, label: 'Ghost Employees' },
       { key: '/admin/attendance-requests', icon: <CheckCircleOutlined />, label: 'Att. Requests (Admin)' },
       { key: '/admin/employee-management', icon: <UserOutlined />, label: 'Employee Mgmt' },
-      { key: '/admin/change-requests', icon: <CheckCircleOutlined />, label: 'Profile Changes' },
     ] : []),
 
     // === Administration — only for super admin / admin ===

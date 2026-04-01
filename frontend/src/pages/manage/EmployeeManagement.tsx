@@ -6,6 +6,9 @@ import dayjs from 'dayjs';
 import apiClient from '../../api/client';
 import { getUsers } from '../../api/users';
 import { getTeams } from '../../api/teams';
+import { useAuthStore } from '../../store/authStore';
+
+const ADMIN_ROLES = ['super admin', 'Admin', 'Hr Manager'];
 
 const adminChange = (data: any) => apiClient.post('/users/admin-change-employee', data).then(r => r.data);
 const getHistory = (userId: number) => apiClient.get('/users/employee-history', { params: { userId } }).then(r => r.data);
@@ -13,6 +16,8 @@ const getDesignations = () => apiClient.get('/users/all-designations').then(r =>
 
 export default function EmployeeManagement() {
   const qc = useQueryClient();
+  const currentUser = useAuthStore((s) => s.user);
+  const isSuperAdmin = currentUser?.roles?.some((r: any) => ADMIN_ROLES.includes(r.name));
   const [userId, setUserId] = useState<number | undefined>();
   const [field, setField] = useState<'designation' | 'team' | 'reportTo'>('designation');
   const [newValue, setNewValue] = useState('');
@@ -63,7 +68,11 @@ export default function EmployeeManagement() {
           <div style={{ fontWeight: 600, color: '#1C2833', marginBottom: 6 }}>Select Employee:</div>
           <Select showSearch optionFilterProp="label" style={{ width: '100%' }} placeholder="Search by name..."
             value={userId} onChange={(v) => { setUserId(v); setNewValue(''); }}
-            options={(users?.items || []).filter((u: any) => u.isActive).map((u: any) => ({
+            options={(users?.items || []).filter((u: any) => {
+              if (!u.isActive) return false;
+              if (!isSuperAdmin && currentUser?.teamId && u.teamId !== currentUser.teamId) return false;
+              return true;
+            }).map((u: any) => ({
               label: `${u.displayName || u.username} — ${u.team?.teamName || 'No Team'} — ${u.designation?.name || 'No Designation'}`,
               value: u.id,
             }))} />
@@ -105,8 +114,10 @@ export default function EmployeeManagement() {
                 <Select value={field} onChange={(v: any) => { setField(v); setNewValue(''); }} style={{ width: '100%' }}
                   options={[
                     { label: 'Designation / Role', value: 'designation' },
-                    { label: 'Team', value: 'team' },
-                    { label: 'Reports To (Manager)', value: 'reportTo' },
+                    ...(isSuperAdmin ? [
+                      { label: 'Team', value: 'team' },
+                      { label: 'Reports To (Manager)', value: 'reportTo' },
+                    ] : []),
                   ]} />
               </div>
               <div>

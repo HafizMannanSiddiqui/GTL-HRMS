@@ -162,12 +162,16 @@ export class UsersService {
     const isSuperAdmin = changerRoles.some(r => ['super admin', 'Admin'].includes(r.role.name));
 
     if (!isSuperAdmin) {
-      // Team Lead — verify the target user is in their team
+      // Team Lead restrictions:
+      // 1. Can only edit members of their own team
       const changer = await this.prisma.user.findUnique({ where: { id: changedBy }, select: { teamId: true } });
       const target = await this.prisma.user.findUnique({ where: { id: userId }, select: { teamId: true } });
       if (changer?.teamId !== target?.teamId) {
         return { error: 'You can only edit members of your own team' };
       }
+      // 2. Can only change designation — NOT team or manager
+      if (fieldName === 'team') return { error: 'Only super admin can change team assignments' };
+      if (fieldName === 'reportTo') return { error: 'Only super admin can change reporting structure' };
     }
     let oldValue = '';
 
