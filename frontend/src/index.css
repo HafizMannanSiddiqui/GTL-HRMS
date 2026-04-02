@@ -223,3 +223,82 @@ html, body, #root { width: 100%; height: 100%; overflow-x: hidden; }
 /* ── Smooth scrolling & transitions ── */
 html { scroll-behavior: smooth; }
 .ant-layout-content { transition: all 0.2s ease; }
+
+/* ═══════════════════════════════════════════════════════ */
+/* RESPONSIVE — Mobile & Tablet                           */
+/* ═══════════════════════════════════════════════════════ */
+
+/* Tablet (< 992px) */
+@media (max-width: 992px) {
+  .form-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .page-header { flex-direction: column; align-items: flex-start !important; gap: 10px !important; }
+  .page-header .page-filters { width: 100%; flex-wrap: wrap; }
+  .filter-bar { flex-wrap: wrap; }
+  .ant-layout-sider { position: fixed !important; z-index: 100; }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 768px) {
+  .page-heading { font-size: 18px !important; }
+  .page-header .page-title { font-size: 18px !important; }
+
+  /* Stack Ant Row/Col */
+  .ant-row { flex-direction: column !important; }
+  .ant-col { flex: 0 0 100% !important; max-width: 100% !important; }
+  .ant-col-xs-24 { flex: 0 0 100% !important; max-width: 100% !important; }
+
+  /* Tables scroll horizontally */
+  table { min-width: 600px !important; }
+  th, td { padding: 5px 8px !important; font-size: 11px !important; }
+
+  /* Cards */
+  .ant-card { border-radius: 8px !important; }
+  .ant-card-body { padding: 12px !important; }
+
+  /* Forms */
+  .clean-form .ant-select-selector { height: 34px !important; }
+  .clean-form .ant-picker { height: 34px !important; }
+
+  /* Sidebar auto-collapse on mobile */
+  .ant-layout-sider {
+    position: fixed !important;
+    z-index: 100;
+    height: 100vh;
+  }
+  .ant-layout-sider-collapsed {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    flex: 0 0 0 !important;
+  }
+
+  /* Modals full-width on mobile */
+  .ant-modal { max-width: calc(100vw - 16px) !important; margin: 8px !important; }
+  .ant-modal-content { padding: 12px !important; }
+
+  /* Week headers wrap */
+  .week-header { flex-wrap: wrap; font-size: 12px !important; padding: 6px 10px !important; }
+  .week-header .week-label { min-width: auto !important; }
+
+  /* Tabs scroll on mobile */
+  .ant-tabs-nav { overflow-x: auto !important; }
+  .ant-tabs-tab { padding: 8px 10px !important; font-size: 12px !important; }
+
+  /* Buttons */
+  .submit-btn { padding: 4px 28px !important; height: 36px !important; font-size: 14px !important; }
+  .download-btn { padding: 4px 16px !important; height: 32px !important; }
+
+  /* Collapse */
+  .ant-collapse-header { padding: 8px 12px !important; }
+
+  /* Hide less important columns on mobile */
+  .hide-mobile { display: none !important; }
+}
+
+/* Small phones (< 480px) */
+@media (max-width: 480px) {
+  .page-heading { font-size: 16px !important; padding-bottom: 6px !important; }
+  .ant-statistic-title { font-size: 10px !important; }
+  .ant-statistic-content { font-size: 16px !important; }
+  .ant-avatar { width: 32px !important; height: 32px !important; font-size: 13px !important; }
+}

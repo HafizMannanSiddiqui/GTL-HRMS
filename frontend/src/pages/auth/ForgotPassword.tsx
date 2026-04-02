@@ -58,7 +58,7 @@ export default function ForgotPassword() {
               onChange={e => setUsername(e.target.value)} onPressEnter={handleVerify}
               style={{ marginBottom: 16, borderRadius: 8 }} />
             <Button type="primary" block size="large" loading={loading} onClick={handleVerify}
-              style={{ borderRadius: 8, height: 44, background: '#154360', borderColor: '#154360' }}>
+              style={{ borderRadius: 8, height: 44, background: 'var(--brand-primary, #154360)', borderColor: '#154360' }}>
               Verify Identity
             </Button>
           </>
@@ -70,7 +70,7 @@ export default function ForgotPassword() {
               onChange={e => setConfirmPassword(e.target.value)} onPressEnter={handleReset}
               style={{ marginBottom: 16, borderRadius: 8 }} />
             <Button type="primary" block size="large" loading={loading} onClick={handleReset}
-              style={{ borderRadius: 8, height: 44, background: '#154360', borderColor: '#154360' }}>
+              style={{ borderRadius: 8, height: 44, background: 'var(--brand-primary, #154360)', borderColor: '#154360' }}>
               Reset Password
             </Button>
           </>

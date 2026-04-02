@@ -53,11 +53,22 @@ export default function AttendanceRequests() {
   });
 
   const handleSubmit = (values: any) => {
+    const ciDate = values.checkinDate.format('YYYY-MM-DD');
+    const ciHour = values.checkinTime ? values.checkinTime.hour() : 9;
+    // Checkout date defaults to checkin date. Only next-day if checkin after 3 PM
+    let coDate = ciDate;
+    if (values.checkoutDate) {
+      coDate = values.checkoutDate.format('YYYY-MM-DD');
+      if (coDate !== ciDate && ciHour < 15) {
+        message.error('Checkout date must match checkin date unless you checked in after 3 PM');
+        return;
+      }
+    }
     createMut.mutate({
       attendanceType: values.attendanceType,
-      checkinDate: values.checkinDate.format('YYYY-MM-DD'),
+      checkinDate: ciDate,
       checkinTime: values.checkinTime?.format('HH:mm:ss') || null,
-      checkoutDate: values.checkoutDate?.format('YYYY-MM-DD') || null,
+      checkoutDate: coDate,
       checkoutTime: values.checkoutTime?.format('HH:mm:ss') || null,
       description: values.description,
     });
@@ -69,7 +80,7 @@ export default function AttendanceRequests() {
         <div className="page-title">Attendance Requests</div>
         {!isLeadView && (
           <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowModal(true)}
-            style={{ background: '#e74c3c', borderColor: '#e74c3c', borderRadius: 20 }}>
+            style={{ background: 'var(--brand-accent, #e74c3c)', borderColor: 'var(--brand-accent, #e74c3c)', borderRadius: 20 }}>
             New Request
           </Button>
         )}
@@ -78,7 +89,7 @@ export default function AttendanceRequests() {
       <div style={{ overflowX: 'auto', marginTop: 16 }}>
         <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#154360', color: '#fff' }}>
+            <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
               <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>
               {isLeadView && <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Requester Name</th>}
               <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Attendance Type</th>
@@ -131,29 +142,47 @@ export default function AttendanceRequests() {
       {/* New Request Modal */}
       <Modal title="New Attendance Request" open={showModal} onCancel={() => setShowModal(false)}
         onOk={() => form.submit()} confirmLoading={createMut.isPending} okText="Submit">
-        <Form form={form} onFinish={handleSubmit} layout="vertical" className="clean-form" style={{ marginTop: 16 }}>
-          <Form.Item name="attendanceType" label="Attendance Type" rules={[{ required: true }]}>
-            <Select placeholder="-- Choose --" options={[
+        <Form form={form} onFinish={handleSubmit} layout="vertical" className="clean-form" style={{ marginTop: 16 }}
+          onValuesChange={(changed, all) => {
+            // Auto-sync checkout date
+            const ciDate = all.checkinDate;
+            const ciTime = all.checkinTime;
+            const coTime = all.checkoutTime;
+            if (ciDate) {
+              let coDate = ciDate;
+              // If checkout time < checkin time → next day (e.g. checkin 19:20, checkout 06:25)
+              if (ciTime && coTime && coTime.hour() < ciTime.hour()) {
+                coDate = ciDate.add(1, 'day');
+              }
+              form.setFieldsValue({ checkoutDate: coDate });
+            }
+          }}>
+          <Form.Item name="attendanceType" label="Attendance Type" rules={[{ required: true }]} initialValue="full_day">
+            <Select options={[
               { label: 'Full Day', value: 'full_day' },
               { label: 'Half Day', value: 'half_day' },
             ]} />
           </Form.Item>
           <div className="form-grid">
-            <Form.Item name="checkinDate" label="Checkin Date" rules={[{ required: true }]}>
-              <DatePicker style={{ width: '100%' }} />
+            <Form.Item name="checkinDate" label="Date" rules={[{ required: true, message: 'Select the date' }]}>
+              <DatePicker style={{ width: '100%' }} format="DD MMM YYYY"
+                disabledDate={(c) => c && c.isAfter(dayjs(), 'day')} />
             </Form.Item>
-            <Form.Item name="checkinTime" label="Checkin Time">
-              <TimePicker style={{ width: '100%' }} format="HH:mm:ss" />
+            <Form.Item name="checkinTime" label="Check-In Time" rules={[{ required: true, message: 'Enter check-in time' }]}>
+              <TimePicker style={{ width: '100%' }} format="HH:mm" minuteStep={5} />
             </Form.Item>
-            <Form.Item name="checkoutDate" label="Checkout Date">
-              <DatePicker style={{ width: '100%' }} />
+            <Form.Item name="checkoutDate" label="Checkout Date" tooltip="Auto-set to checkin date. Only change for late shifts (after 3 PM)">
+              <DatePicker style={{ width: '100%' }} format="DD MMM YYYY" disabled />
             </Form.Item>
-            <Form.Item name="checkoutTime" label="Checkout Time">
-              <TimePicker style={{ width: '100%' }} format="HH:mm:ss" />
+            <Form.Item name="checkoutTime" label="Check-Out Time" rules={[{ required: true, message: 'Enter check-out time' }]}>
+              <TimePicker style={{ width: '100%' }} format="HH:mm" minuteStep={5} />
             </Form.Item>
           </div>
-          <Form.Item name="description" label="Reason / Description">
-            <Input.TextArea rows={3} placeholder="Why do you need this correction?" />
+          <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: -8, marginBottom: 12 }}>
+            Checkout date is auto-set to match checkin date. For late shifts (after 3 PM), your lead can adjust it.
+          </div>
+          <Form.Item name="description" label="Reason" rules={[{ required: true, message: 'Explain why you need this correction' }]}>
+            <Input.TextArea rows={2} placeholder="e.g. Forgot to check out, system was down..." showCount maxLength={200} />
           </Form.Item>
         </Form>
       </Modal>

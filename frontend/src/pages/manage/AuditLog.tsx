@@ -22,7 +22,7 @@ export default function AuditLog() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', minWidth: 700, borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#154360', color: '#fff' }}>
+              <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Time</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Who</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Action</th>

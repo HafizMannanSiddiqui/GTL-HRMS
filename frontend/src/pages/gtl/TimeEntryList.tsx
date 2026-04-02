@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Collapse, Select, Button, message, Popconfirm, Modal, Form, Input, DatePicker, Spin } from 'antd';
-import { DownloadOutlined, EditOutlined, DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import { Collapse, Select, Button, message, Popconfirm, Modal, Form, Input, DatePicker, Spin, Card, Row, Col, Statistic, Tag } from 'antd';
+import { DownloadOutlined, EditOutlined, DeleteOutlined, DownOutlined, FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { getTimesheetGrouped, downloadTimesheetCsv, deleteTimeEntry, updateTimeEntry, getPrograms, getProjects, getSubProjects, getWbs } from '../../api/gtl';
@@ -101,7 +101,7 @@ export default function TimeEntryList() {
       <div style={{ overflowX: 'auto' }}>
         <table className="gtl-table" style={{ width: '100%', minWidth: 950, borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#154360', color: '#fff' }}>
+            <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
               <th style={{ width: 40, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>#</th>
               <th style={{ width: 100, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>User Name</th>
               <th style={{ width: 90, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Date</th>
@@ -110,6 +110,7 @@ export default function TimeEntryList() {
               <th style={{ width: 180, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Sub Project</th>
               <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>WBS Description</th>
               <th style={{ width: 70, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Hours</th>
+              <th style={{ width: 80, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Status</th>
               {isMyPage && <th style={{ width: 80, padding: '8px 12px', fontWeight: 600, fontSize: 13, textAlign: 'center' }}>Action</th>}
             </tr>
           </thead>
@@ -127,7 +128,12 @@ export default function TimeEntryList() {
                   {entry.wbs?.description && entry.description ? ' - ' : ''}
                   {entry.description}
                 </td>
-                <td style={{ padding: '7px 12px', fontSize: 13 }}>{Number(entry.hours)}</td>
+                <td style={{ padding: '7px 12px', fontSize: 13, fontWeight: 600 }}>{Number(entry.hours)}</td>
+                <td style={{ padding: '7px 12px', fontSize: 13 }}>
+                  {entry.status === 0 && <Tag color="orange" style={{ fontSize: 10 }}>Pending</Tag>}
+                  {entry.status === 1 && <Tag color="green" style={{ fontSize: 10 }}>Approved</Tag>}
+                  {entry.status === 2 && <Tag color="red" style={{ fontSize: 10 }}>Rejected</Tag>}
+                </td>
                 {isMyPage && (
                   <td style={{ padding: '7px 12px', fontSize: 13, textAlign: 'center' }}>
                     {entry.status === 0 ? (
@@ -142,8 +148,8 @@ export default function TimeEntryList() {
                 )}
               </tr>
             ))}
-            <tr style={{ background: '#EBF5FB' }}>
-              <td colSpan={isMyPage ? 7 : 7} style={{ textAlign: 'right', padding: '6px 12px', fontWeight: 700, fontSize: 13 }}>Total:</td>
+            <tr style={{ background: 'var(--brand-primary-bg, #EBF5FB)' }}>
+              <td colSpan={isMyPage ? 8 : 8} style={{ textAlign: 'right', padding: '6px 12px', fontWeight: 700, fontSize: 13 }}>Total:</td>
               <td colSpan={isMyPage ? 2 : 1} style={{ padding: '6px 12px', fontWeight: 700, fontSize: 13 }}>{week.totalHours}</td>
             </tr>
           </tbody>
@@ -167,38 +173,104 @@ export default function TimeEntryList() {
     children: renderWeekTable(week),
   }));
 
+  // Calculate stats
+  const totalEntries = data?.totalEntries || 0;
+  const grandTotal = data?.grandTotal || 0;
+  const weekCount = (data?.weeks || []).length;
+  const avgPerWeek = weekCount > 0 ? Math.round((grandTotal / weekCount) * 10) / 10 : 0;
+  const pendingCount = (data?.weeks || []).reduce((s: number, w: any) => s + w.entries.filter((e: any) => e.status === 0).length, 0);
+  const approvedCount = (data?.weeks || []).reduce((s: number, w: any) => s + w.entries.filter((e: any) => e.status === 1).length, 0);
+
   return (
     <div>
-      {/* Page heading */}
-      <div className="page-heading">Time Sheet</div>
-
-      {/* Filters */}
-      <div className="filter-bar">
-        {!isMyPage && (
-          <Select placeholder="Select Employee" showSearch optionFilterProp="label" style={{ width: 250 }}
-            value={selectedUserId} onChange={setSelectedUserId}
-            options={(allUsersData?.items || []).map((u: any) => ({ label: u.displayName || u.username, value: u.id }))} />
-        )}
-        <Select value={year} onChange={setYear} options={yearOptions} style={{ width: 120 }} size="large" />
-        <Select value={month} onChange={(v) => { setMonth(v); setProgramId(undefined); }} options={monthOptions} style={{ width: 180 }} size="large" />
-        <Select placeholder="All Programs" allowClear value={programId} onChange={setProgramId} style={{ width: 220 }}
-          options={(data?.programs || []).map((p: any) => ({ label: p.programName, value: p.id }))} />
+      <div className="page-header">
+        <div className="page-title"><FileTextOutlined style={{ marginRight: 8 }} />Time Sheet</div>
+        <div className="page-filters">
+          {!isMyPage && (
+            <Select placeholder="Select Employee" showSearch optionFilterProp="label" style={{ width: 250 }}
+              value={selectedUserId} onChange={setSelectedUserId}
+              options={(allUsersData?.items || []).map((u: any) => ({ label: u.displayName || u.username, value: u.id }))} />
+          )}
+          <Select value={year} onChange={setYear} options={yearOptions} style={{ width: 100 }} />
+          <Select value={month} onChange={(v) => { setMonth(v); setProgramId(undefined); }} options={monthOptions} style={{ width: 140 }} />
+          <Select placeholder="All Programs" allowClear value={programId} onChange={setProgramId} style={{ width: 180 }}
+            options={(data?.programs || []).map((p: any) => ({ label: p.programName, value: p.id }))} />
+          {data?.totalEntries > 0 && (
+            <Button icon={<DownloadOutlined />} className="download-btn" onClick={handleDownload}>Download</Button>
+          )}
+        </div>
       </div>
 
-      {/* Download button */}
-      {data?.totalEntries > 0 && (
-        <div style={{ textAlign: 'right', paddingBottom: 14 }}>
-          <Button icon={<DownloadOutlined />} className="download-btn" onClick={handleDownload}>
-            Download
-          </Button>
-        </div>
+      {/* GTL Gap Warning */}
+      {data && totalEntries > 0 && (() => {
+        const lastEntryDate = (data.weeks || []).reduce((latest: string, w: any) => {
+          const weekLast = w.entries.reduce((l: string, e: any) => e.entryDate > l ? e.entryDate : l, '');
+          return weekLast > latest ? weekLast : latest;
+        }, '');
+        const daysSince = lastEntryDate ? dayjs().diff(dayjs(lastEntryDate), 'day') : 0;
+        if (daysSince > 1) return (
+          <div style={{ background: '#fff7e6', border: '1px solid #ffe58f', borderRadius: 10, padding: '10px 16px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 20 }}>⚠️</span>
+            <div>
+              <span style={{ fontWeight: 600, color: '#d48806' }}>You haven't logged work for {daysSince} day{daysSince > 1 ? 's' : ''}</span>
+              <span style={{ fontSize: 12, color: '#8c8c8c', marginLeft: 8 }}>Last entry: {dayjs(lastEntryDate).format('DD MMM YYYY')}</span>
+            </div>
+            <Button size="small" type="primary" onClick={() => window.location.href = '/my/data-entry'} style={{ marginLeft: 'auto', borderRadius: 16 }}>Log Now</Button>
+          </div>
+        );
+        return null;
+      })()}
+
+      {/* Summary Stats */}
+      {data && totalEntries > 0 && (
+        <Card size="small" style={{ borderRadius: 12, marginBottom: 16, border: '2px solid var(--brand-primary, #154360)' }}>
+          <Row gutter={16}>
+            <Col xs={8} md={4}>
+              <Statistic title="Total Hours" value={grandTotal}
+                prefix={<ClockCircleOutlined />}
+                valueStyle={{ color: 'var(--brand-primary)', fontSize: 22, fontWeight: 800 }} />
+            </Col>
+            <Col xs={8} md={4}>
+              <Statistic title="Entries" value={totalEntries}
+                valueStyle={{ fontSize: 22, fontWeight: 800 }} />
+            </Col>
+            <Col xs={8} md={4}>
+              <Statistic title="Weeks" value={weekCount}
+                valueStyle={{ fontSize: 22, fontWeight: 800 }} />
+            </Col>
+            <Col xs={8} md={4}>
+              <Statistic title="Avg/Week" value={`${avgPerWeek}h`}
+                valueStyle={{ color: avgPerWeek >= 40 ? '#52c41a' : '#fa8c16', fontSize: 20, fontWeight: 800 }} />
+            </Col>
+            <Col xs={8} md={4}>
+              <Statistic title="Approved" value={approvedCount}
+                prefix={<CheckCircleOutlined />}
+                valueStyle={{ color: '#52c41a', fontSize: 20, fontWeight: 800 }} />
+            </Col>
+            <Col xs={8} md={4}>
+              <Statistic title="Pending" value={pendingCount}
+                valueStyle={{ color: pendingCount > 0 ? '#fa8c16' : '#52c41a', fontSize: 20, fontWeight: 800 }} />
+            </Col>
+          </Row>
+        </Card>
       )}
 
       {/* Content */}
       {isLoading ? (
         <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div>
       ) : (data?.weeks || []).length === 0 ? (
-        <div className="no-record-found">No Record Found</div>
+        <div style={{ textAlign: 'center', padding: '60px 20px', background: 'var(--brand-primary-bg, #f0f7ff)', borderRadius: 12, border: '1px dashed #d9d9d9' }}>
+          <div style={{ fontSize: 48 }}>📋</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: '#333', marginTop: 8 }}>No Time Entries</div>
+          <div style={{ fontSize: 13, color: '#8c8c8c', marginTop: 4 }}>
+            {isMyPage ? 'You haven\'t logged any work for this month. Go to Data Entry to start logging.' : 'No entries found for the selected filters.'}
+          </div>
+          {isMyPage && (
+            <Button type="primary" onClick={() => window.location.href = '/my/data-entry'} style={{ marginTop: 16, borderRadius: 20 }}>
+              Log Work Now
+            </Button>
+          )}
+        </div>
       ) : (
         <>
           <Collapse

@@ -74,7 +74,7 @@ export default function WfhManagement() {
         <div className="page-title"><HomeOutlined style={{ marginRight: 8 }} />Work From Home</div>
         <div className="page-filters">
           {isLead && <Button type="primary" icon={<HomeOutlined />} onClick={() => setAssignModal(true)}
-            style={{ background: '#154360', borderColor: '#154360', borderRadius: 20 }}>Assign WFH</Button>}
+            style={{ background: 'var(--brand-primary, #154360)', borderColor: 'var(--brand-primary, #154360)', borderRadius: 20 }}>Assign WFH</Button>}
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export default function WfhManagement() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', minWidth: 1000, borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#154360', color: '#fff' }}>
+              <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Employee</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Team</th>

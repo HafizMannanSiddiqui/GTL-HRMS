@@ -61,7 +61,7 @@ export default function GhostEmployees() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#154360', color: '#fff' }}>
+              <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Name</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Email</th>

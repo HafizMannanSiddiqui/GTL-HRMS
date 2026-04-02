@@ -78,13 +78,10 @@ export default function Dashboard() {
   })();
   const attendancePct = totalWorkDays > 0 ? Math.round((daysPresent / totalWorkDays) * 100) : 0;
 
-  const attWithCheckout = (myAttendance || []).filter((a: any) => a.checkinTime && a.checkoutTime);
-  const totalMinutes = attWithCheckout.reduce((s: number, a: any) => {
-    const ci = dayjs(`2000-01-01 ${a.checkinTime}`);
-    const co = dayjs(`2000-01-01 ${a.checkoutTime}`);
-    return s + co.diff(ci, 'minute');
-  }, 0);
-  const avgHours = attWithCheckout.length > 0 ? Math.round((totalMinutes / attWithCheckout.length / 60) * 10) / 10 : 0;
+  const attWithDuration = (myAttendance || []).filter((a: any) => a.durationSeconds && Number(a.durationSeconds) > 0);
+  const totalWorkSeconds = attWithDuration.reduce((s: number, a: any) => s + Math.min(Number(a.durationSeconds), 43200), 0);
+  const avgHours = attWithDuration.length > 0 ? Math.round((totalWorkSeconds / attWithDuration.length / 3600) * 10) / 10 : 0;
+  const totalWorkHours = Math.round(totalWorkSeconds / 3600 * 10) / 10;
 
   const todayAtt = (myAttendance || []).find((a: any) => dayjs(a.checkinDate).format('YYYY-MM-DD') === now.format('YYYY-MM-DD'));
 
@@ -135,7 +132,7 @@ export default function Dashboard() {
           <StatCard title="Days Present" value={daysPresent} suffix={`/ ${totalWorkDays}`} icon={<CheckCircleOutlined />} color="#52c41a" loading={la} />
         </Col>
         <Col xs={12} lg={6}>
-          <StatCard title="Hours Logged" value={Math.round(myTotalHours * 10) / 10} suffix="hrs" icon={<ClockCircleOutlined />} color="#1677ff" loading={le} />
+          <StatCard title="Work Hours" value={totalWorkHours || Math.round(myTotalHours * 10) / 10} suffix="hrs" icon={<ClockCircleOutlined />} color="#1677ff" loading={la} />
         </Col>
         <Col xs={12} lg={6}>
           <StatCard title="Avg Work Hours" value={avgHours} suffix="hrs/day" icon={<FieldTimeOutlined />} color="#722ed1" loading={la} />
@@ -162,7 +159,7 @@ export default function Dashboard() {
           <Tabs items={[
             {
               key: 'available',
-              label: <span style={{ color: '#52c41a' }}>Available <Tag color="green">{todayDash.available.count}</Tag></span>,
+              label: <span style={{ color: '#52c41a' }}>Available <Tag color="green">{filterUsers(todayDash.available.users).length}</Tag></span>,
               children: (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
                   {filterUsers(todayDash.available.users).map((u: any) => (
@@ -184,7 +181,7 @@ export default function Dashboard() {
             },
             {
               key: 'notavailable',
-              label: <span style={{ color: '#ff4d4f' }}>Not Available <Tag color="red">{todayDash.notAvailable.count}</Tag></span>,
+              label: <span style={{ color: '#ff4d4f' }}>Not Available <Tag color="red">{filterUsers(todayDash.notAvailable.users).length}</Tag></span>,
               children: (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
                   {filterUsers(todayDash.notAvailable.users).map((u: any) => (
@@ -205,7 +202,7 @@ export default function Dashboard() {
             },
             {
               key: 'pending',
-              label: <span style={{ color: '#fa8c16' }}>Pending Checkout <Tag color="orange">{todayDash.pendingCheckout.count}</Tag></span>,
+              label: <span style={{ color: '#fa8c16' }}>Pending Checkout <Tag color="orange">{filterUsers(todayDash.pendingCheckout.users).length}</Tag></span>,
               children: (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
                   {filterUsers(todayDash.pendingCheckout.users).map((u: any) => (
@@ -234,7 +231,7 @@ export default function Dashboard() {
         <Col xs={24} lg={8}>
           <Card style={{ borderRadius: 12, height: '100%' }} styles={{ body: { padding: 24 } }}>
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <Avatar size={72} style={{ background: '#1677ff', fontSize: 32, fontWeight: 700, marginBottom: 12 }}>
+              <Avatar size={72} style={{ background: 'var(--brand-primary, #1677ff)', fontSize: 32, fontWeight: 700, marginBottom: 12 }}>
                 {user?.displayName?.[0]?.toUpperCase()}
               </Avatar>
               <Typography.Title level={4} style={{ margin: 0 }}>{user?.displayName}</Typography.Title>
@@ -274,9 +271,10 @@ export default function Dashboard() {
           <Card title={<><RiseOutlined /> Quick Actions</>} style={{ borderRadius: 12, height: '100%' }}>
             {[
               { title: 'Log Time Entry', desc: 'Record your daily work hours', icon: <ClockCircleOutlined />, color: '#1677ff', path: '/my/data-entry' },
-              { title: 'Check In / Out', desc: todayAtt ? 'Already checked in' : 'Mark your attendance', icon: <IdcardOutlined />, color: '#52c41a', path: '/my/check-in-out' },
-              { title: 'Apply for Leave', desc: `${balance?.remaining || 0} leaves remaining`, icon: <ScheduleOutlined />, color: '#fa8c16', path: '/my/apply-leave' },
-              { title: 'My Profile', desc: 'View & edit your info', icon: <CalendarOutlined />, color: '#722ed1', path: '/my/profile' },
+              { title: 'My Time Sheet', desc: 'View your logged hours', icon: <IdcardOutlined />, color: '#52c41a', path: '/my/timesheet' },
+              { title: 'Apply for Leave', desc: `${balance?.remaining || 0} leaves remaining`, icon: <ScheduleOutlined />, color: '#fa8c16', path: '/my/leaves' },
+              { title: 'My Attendance', desc: 'View your monthly attendance', icon: <CalendarOutlined />, color: '#722ed1', path: '/my/attendance' },
+              { title: 'My Profile', desc: 'View & edit your info', icon: <RiseOutlined />, color: '#eb2f96', path: '/my/profile' },
             ].map((item) => (
               <div key={item.title} onClick={() => navigate(item.path)}
                 style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', cursor: 'pointer', borderBottom: '1px solid #f5f5f5' }}>

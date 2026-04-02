@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, DatePicker, Form, Select, Input, message, Card, Row, Col, Tag, Alert } from 'antd';
 import { ClockCircleOutlined, CheckCircleOutlined, CalendarOutlined, ProjectOutlined, FileTextOutlined } from '@ant-design/icons';
-import { createTimeEntry, getPrograms, getProjects, getSubProjects, getWbs, quickAddProject, quickAddSubProject } from '../../api/gtl';
+import { createTimeEntry, getPrograms, getProjects, getSubProjects, getWbs } from '../../api/gtl';
 import { getMyAttendance } from '../../api/attendance';
 import { useAuthStore } from '../../store/authStore';
 import { useState, useEffect } from 'react';
@@ -14,8 +14,6 @@ export default function DataEntry() {
   const [programId, setProgramId] = useState<number | undefined>();
   const [projectId, setProjectId] = useState<number | undefined>();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newSubProjectName, setNewSubProjectName] = useState('');
 
   const { data: programs } = useQuery({ queryKey: ['programs'], queryFn: () => getPrograms() });
   const { data: projects } = useQuery({ queryKey: ['projects', programId], queryFn: () => getProjects(programId), enabled: !!programId });
@@ -219,36 +217,13 @@ export default function DataEntry() {
               <Form.Item name="projectId" label="Project" rules={[{ required: true, message: 'Required' }]}>
                 <Select placeholder={programId ? 'Select project...' : 'Select program first'} showSearch optionFilterProp="label" disabled={!programId}
                   options={(projects || []).map((p: any) => ({ label: p.projectName, value: p.id }))}
-                  onChange={(v) => { setProjectId(v); form.setFieldsValue({ subProjectId: undefined }); }}
-                  dropdownRender={(menu) => (
-                    <>{menu}{programId && (
-                      <div style={{ padding: '6px 10px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: 6 }}>
-                        <Input size="small" placeholder="New project..." value={newProjectName} onChange={e => setNewProjectName(e.target.value)} style={{ flex: 1 }} />
-                        <Button size="small" type="primary" disabled={!newProjectName} onClick={async () => {
-                          const p = await quickAddProject({ projectName: newProjectName, programId });
-                          setNewProjectName(''); setProjectId(p.id); form.setFieldsValue({ projectId: p.id, subProjectId: undefined });
-                          qc.invalidateQueries({ queryKey: ['projects'] });
-                        }}>+</Button>
-                      </div>
-                    )}</>
-                  )} />
+                  onChange={(v) => { setProjectId(v); form.setFieldsValue({ subProjectId: undefined }); }} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item name="subProjectId" label="Sub Project" rules={[{ required: true, message: 'Required' }]}>
                 <Select placeholder={projectId ? 'Select sub-project...' : 'Select project first'} showSearch optionFilterProp="label" disabled={!projectId}
-                  options={(subProjects || []).map((p: any) => ({ label: p.subProjectName, value: p.id }))}
-                  dropdownRender={(menu) => (
-                    <>{menu}{projectId && programId && (
-                      <div style={{ padding: '6px 10px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: 6 }}>
-                        <Input size="small" placeholder="New sub-project..." value={newSubProjectName} onChange={e => setNewSubProjectName(e.target.value)} style={{ flex: 1 }} />
-                        <Button size="small" type="primary" disabled={!newSubProjectName} onClick={async () => {
-                          const sp = await quickAddSubProject({ subProjectName: newSubProjectName, programId, projectId });
-                          setNewSubProjectName(''); form.setFieldsValue({ subProjectId: sp.id }); qc.invalidateQueries({ queryKey: ['subProjects'] });
-                        }}>+</Button>
-                      </div>
-                    )}</>
-                  )} />
+                  options={(subProjects || []).map((p: any) => ({ label: p.subProjectName, value: p.id }))} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>

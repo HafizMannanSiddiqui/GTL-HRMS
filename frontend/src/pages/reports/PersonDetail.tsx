@@ -165,7 +165,7 @@ export default function PersonDetail() {
           <Card title="Attendance Detail" size="small" style={{ borderRadius: 10, marginBottom: 16 }}>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr style={{ background: '#154360', color: '#fff' }}>
+                <thead><tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ padding: '6px 10px', fontSize: 12 }}>Date</th>
                   <th style={{ padding: '6px 10px', fontSize: 12 }}>Check In</th>
                   <th style={{ padding: '6px 10px', fontSize: 12 }}>Check Out</th>

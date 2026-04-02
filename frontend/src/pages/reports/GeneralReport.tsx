@@ -145,7 +145,7 @@ export default function GeneralReport() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', minWidth: 1100, borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#154360', color: '#fff' }}>
+                <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ width: 40, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>#</th>
                   <th style={{ width: 100, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Date</th>
                   <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>User</th>

@@ -76,7 +76,7 @@ export default function ResourceAllocation() {
                   <div style={{ overflowX: 'auto', marginTop: 4 }}>
                     <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                       <thead>
-                        <tr style={{ background: '#154360', color: '#fff' }}>
+                        <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                           <th style={{ padding: '4px 8px', textAlign: 'left', minWidth: 100 }}>Team</th>
                           {days.map(d => <th key={d} style={{ padding: '4px 4px', textAlign: 'center', fontSize: 11, minWidth: 28 }}>{String(d).padStart(2, '0')}</th>)}
                           <th style={{ padding: '4px 8px', textAlign: 'center' }}>Total</th>

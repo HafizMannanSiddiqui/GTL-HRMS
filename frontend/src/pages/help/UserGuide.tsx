@@ -216,8 +216,8 @@ export default function UserGuide() {
         </Card>
       )}
 
-      {/* Feature Comparison */}
-      <Card title="Old System vs Current System — Feature Comparison" size="small" style={{ borderRadius: 12 }}>
+      {/* Feature Comparison — admin only */}
+      {isAdmin && <Card title="Old System vs Current System — Feature Comparison" size="small" style={{ borderRadius: 12 }}>
         <div style={{ marginBottom: 12, fontSize: 13, color: '#666' }}>
           <Tag color="green">{comparisonData.filter(d => d.unified).length}</Tag> features in Current System |
           <Tag color="default">{comparisonData.filter(d => d.gtl).length}</Tag> were in old GTL |
@@ -228,6 +228,7 @@ export default function UserGuide() {
           rowClassName={(r) => !r.gtl && !r.hrms ? 'row-new-feature' : ''} />
       </Card>
 
+      }
       <style>{`.row-new-feature td { background: #f0f7ff !important; }`}</style>
     </div>
   );

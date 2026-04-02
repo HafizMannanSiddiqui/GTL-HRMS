@@ -65,7 +65,7 @@ export default function TeamReport() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', minWidth: 700, borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#154360', color: '#fff' }}>
+              <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ width: 50, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Sr.No</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Team Name</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Urdu Name</th>

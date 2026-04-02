@@ -19,11 +19,11 @@ export const defaultTheme: ThemeConfig = {
   token: { colorPrimary: '#1677ff', borderRadius: 6 },
 };
 
-export function getThemeForCompany(company: string | null | undefined): ThemeConfig {
-  if (!company) return defaultTheme;
-  // Match partial company names
+export function getThemeForCompany(company: string | null | undefined, email?: string | null): ThemeConfig {
+  const source = company || (email?.split('@')[1] || '');
+  if (!source) return defaultTheme;
   for (const [key, theme] of Object.entries(companyThemes)) {
-    if (company.toLowerCase().includes(key.toLowerCase().replace(/\d+/g, ''))) {
+    if (source.toLowerCase().includes(key.toLowerCase().replace(/\d+/g, ''))) {
       return theme;
     }
   }
@@ -74,10 +74,11 @@ export const defaultCssVars: Record<string, string> = {
   '--brand-sidebar-trigger': '#0a1f2f',
 };
 
-export function getCssVarsForCompany(company: string | null | undefined): Record<string, string> {
-  if (!company) return defaultCssVars;
+export function getCssVarsForCompany(company: string | null | undefined, email?: string | null): Record<string, string> {
+  const source = company || (email?.split('@')[1] || '');
+  if (!source) return defaultCssVars;
   for (const [key, vars] of Object.entries(companyCssVars)) {
-    if (company.toLowerCase().includes(key.toLowerCase().replace(/\d+/g, ''))) {
+    if (source.toLowerCase().includes(key.toLowerCase().replace(/\d+/g, ''))) {
       return vars;
     }
   }

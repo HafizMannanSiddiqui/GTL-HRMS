@@ -60,8 +60,8 @@ export default function ProjectAllocation() {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                   <thead>
-                    <tr style={{ background: '#154360', color: '#fff' }}>
-                      <th style={{ padding: '4px 8px', textAlign: 'left', minWidth: 150, position: 'sticky', left: 0, background: '#154360' }}>Employee</th>
+                    <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
+                      <th style={{ padding: '4px 8px', textAlign: 'left', minWidth: 150, position: 'sticky', left: 0, background: 'var(--brand-primary, #154360)' }}>Employee</th>
                       {days.map(d => <th key={d} style={{ padding: '3px 3px', textAlign: 'center', fontSize: 11, minWidth: 26 }}>{String(d).padStart(2, '0')}</th>)}
                       <th style={{ padding: '4px 8px', textAlign: 'center' }}>Total</th>
                     </tr>

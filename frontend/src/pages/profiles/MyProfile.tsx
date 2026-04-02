@@ -144,65 +144,99 @@ export default function MyProfile() {
   const pct = profile?.completionPct || 0;
   const L = (text: string) => <span style={{ fontWeight: 600, color: '#1C2833' }}>{text}</span>;
 
+  const tenure = profile?.tenureYears > 0 ? `${profile.tenureYears}y ${profile.tenureMonths}m` : profile?.tenureMonths > 0 ? `${profile.tenureMonths}m` : null;
+  const totalExp = profile?.totalExpYears > 0 ? `${profile.totalExpYears}y ${profile.totalExpMonths}m` : profile?.totalExpMonths > 0 ? `${profile.totalExpMonths}m` : null;
+
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-      {/* Header */}
-      <Card style={{ borderRadius: 12, marginBottom: 24 }}>
-        <Row gutter={24} align="middle">
-          <Col>
-            <Avatar size={80} style={{ background: '#1677ff', fontSize: 36, fontWeight: 700 }}>
+      {/* ═══ Hero Profile Card ═══ */}
+      <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+        {/* Top gradient banner */}
+        <div style={{ background: 'linear-gradient(135deg, var(--brand-primary, #154360), var(--brand-primary-light, #1a5276))', padding: '32px 32px 60px', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: 16, right: 20 }}>
+            <Progress type="circle" percent={pct} size={56} strokeColor={pct > 60 ? '#52c41a' : pct > 30 ? '#fa8c16' : '#ff4d4f'}
+              format={(p) => <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>{p}%</span>} />
+          </div>
+          {profile?.careerObjectives && (
+            <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: 15, fontStyle: 'italic', maxWidth: 500, lineHeight: 1.5 }}>
+              "{profile.careerObjectives.slice(0, 120)}{profile.careerObjectives.length > 120 ? '...' : ''}"
+            </div>
+          )}
+        </div>
+
+        {/* Profile info card overlapping the banner */}
+        <div style={{ background: '#fff', padding: '0 32px 24px', marginTop: -40 }}>
+          <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            {/* Avatar */}
+            <Avatar size={96} style={{
+              background: 'var(--brand-primary, #1677ff)', fontSize: 40, fontWeight: 700,
+              border: '4px solid #fff', boxShadow: '0 2px 12px rgba(0,0,0,0.15)', marginTop: -20,
+            }}>
               {profile?.firstName?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase()}
             </Avatar>
-          </Col>
-          <Col flex="auto">
-            <Typography.Title level={3} style={{ margin: 0 }}>{profile?.firstName || user?.displayName?.split(' ')[0]} {profile?.lastName || ''}</Typography.Title>
-            <Typography.Text type="secondary">{profile?.jobTitle || user?.username}</Typography.Text>
-            <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {(myTeamsData?.teams || []).map((t: any) => (
-                <Tag key={t.id} color={t.isPrimary ? 'blue' : 'cyan'}>
-                  <TeamOutlined /> {t.teamName} {t.roleInTeam ? `(${t.roleInTeam})` : ''}
-                </Tag>
-              ))}
-              {(myTeamsData?.teams || []).length === 0 && <Tag color="blue"><TeamOutlined /> {teamName || 'No Team'}</Tag>}
-              {profile?.bloodGroup && <Tag color="red">{profile.bloodGroup}</Tag>}
-              {user?.roles?.map((r: any) => <Tag key={r.id} color="purple">{r.name}</Tag>)}
-            </div>
-            {(myTeamsData?.managers || []).length > 0 && (
-              <div style={{ marginTop: 6, fontSize: 13, color: '#666' }}>
-                Reports to: {(myTeamsData?.managers || []).map((m: any) => (
-                  <Tag key={m.id} color="geekblue" style={{ fontSize: 12 }}>{m.managerName || m.managerUsername}</Tag>
+
+            {/* Name + designation */}
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <Typography.Title level={3} style={{ margin: 0, lineHeight: 1.2 }}>
+                {profile?.firstName || user?.displayName?.split(' ')[0]} {profile?.lastName || ''}
+              </Typography.Title>
+              <div style={{ fontSize: 14, color: '#666' }}>{profile?.jobTitle || user?.designation?.name || '@' + user?.username}</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
+                {(myTeamsData?.teams || []).map((t: any) => (
+                  <Tag key={t.id} color={t.isPrimary ? 'blue' : 'cyan'} style={{ fontSize: 11 }}>
+                    <TeamOutlined /> {t.teamName}
+                  </Tag>
                 ))}
+                {(myTeamsData?.teams || []).length === 0 && <Tag color="blue"><TeamOutlined /> {teamName || 'No Team'}</Tag>}
+                {user?.roles?.map((r: any) => <Tag key={r.id} color="purple" style={{ fontSize: 11 }}>{r.name}</Tag>)}
+                {profile?.bloodGroup && <Tag color="red" style={{ fontSize: 11 }}>{profile.bloodGroup}</Tag>}
               </div>
-            )}
-          </Col>
-          <Col>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-              {/* Tenure */}
-              {(profile?.tenureYears > 0 || profile?.tenureMonths > 0) && (
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: '#154360' }}>
-                    {profile.tenureYears > 0 ? `${profile.tenureYears}y ` : ''}{profile.tenureMonths}m
-                  </div>
-                  <div style={{ fontSize: 11, color: '#8c8c8c' }}>Tenure</div>
-                </div>
-              )}
-              {/* Total Experience */}
-              {(profile?.totalExpYears > 0 || profile?.totalExpMonths > 0) && (
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: '#722ed1' }}>
-                    {profile.totalExpYears > 0 ? `${profile.totalExpYears}y ` : ''}{profile.totalExpMonths}m
-                  </div>
-                  <div style={{ fontSize: 11, color: '#8c8c8c' }}>Total Exp</div>
-                </div>
-              )}
-              {/* Completion */}
-              <Progress type="circle" percent={pct} size={70}
-                strokeColor={pct >= 80 ? '#52c41a' : pct >= 50 ? '#fa8c16' : '#ff4d4f'}
-                format={(p) => <span style={{ fontSize: 13, fontWeight: 700 }}>{p}%</span>} />
             </div>
-          </Col>
-        </Row>
-      </Card>
+
+            {/* Quick stats */}
+            <div style={{ display: 'flex', gap: 20 }}>
+              {tenure && (
+                <div style={{ textAlign: 'center', padding: '8px 16px', borderRadius: 10, background: 'var(--brand-primary-bg, #f0f7ff)' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--brand-primary)' }}>{tenure}</div>
+                  <div style={{ fontSize: 10, color: '#8c8c8c', textTransform: 'uppercase', letterSpacing: 0.5 }}>Tenure</div>
+                </div>
+              )}
+              {totalExp && (
+                <div style={{ textAlign: 'center', padding: '8px 16px', borderRadius: 10, background: '#f9f0ff' }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: '#722ed1' }}>{totalExp}</div>
+                  <div style={{ fontSize: 10, color: '#8c8c8c', textTransform: 'uppercase', letterSpacing: 0.5 }}>Experience</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Manager info */}
+          {(myTeamsData?.managers || []).length > 0 && (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #f0f0f0', fontSize: 13, color: '#666' }}>
+              Reports to: {(myTeamsData?.managers || []).map((m: any) => (
+                <Tag key={m.id} color="geekblue" style={{ fontSize: 12 }}>{m.managerName || m.managerUsername}</Tag>
+              ))}
+            </div>
+          )}
+
+          {/* Quick info row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12, marginTop: 16 }}>
+            {[
+              { label: 'Email', value: user?.email },
+              { label: 'Phone', value: profile?.contactNo },
+              { label: 'CNIC', value: profile?.cnic },
+              { label: 'Nationality', value: profile?.nationality },
+              { label: 'Blood Group', value: profile?.bloodGroup },
+              { label: 'Joined', value: profile?.dateOfJoining ? dayjs(profile.dateOfJoining).format('DD MMM YYYY') : null },
+            ].filter(f => f.value).map(f => (
+              <div key={f.label} style={{ fontSize: 12 }}>
+                <div style={{ color: '#8c8c8c', textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 10, marginBottom: 2 }}>{f.label}</div>
+                <div style={{ fontWeight: 500, color: '#333' }}>{f.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <Tabs defaultActiveKey="personal" items={[
         {
@@ -463,7 +497,7 @@ function ProfileChangeTab({ userId }: { userId?: number }) {
       {/* Request History */}
       <Card title="My Change Requests" size="small" style={{ borderRadius: 12 }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead><tr style={{ background: '#154360', color: '#fff' }}>
+          <thead><tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
             <th style={{ padding: '6px 12px', fontSize: 12 }}>Field</th>
             <th style={{ padding: '6px 12px', fontSize: 12 }}>Old Value</th>
             <th style={{ padding: '6px 12px', fontSize: 12 }}>New Value</th>

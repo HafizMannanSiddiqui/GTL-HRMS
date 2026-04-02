@@ -135,14 +135,14 @@ function AppRoutes() {
 
 export default function App() {
   const user = useAuthStore((s) => s.user);
-  const theme = getThemeForCompany(user?.payrollCompany);
-  const cssVars = getCssVarsForCompany(user?.payrollCompany);
+  const theme = getThemeForCompany(user?.payrollCompany, user?.email);
+  const cssVars = getCssVarsForCompany(user?.payrollCompany, user?.email);
 
   React.useEffect(() => {
     Object.entries(cssVars).forEach(([key, value]) => {
       document.documentElement.style.setProperty(key, value);
     });
-  }, [user?.payrollCompany]);
+  }, [user?.payrollCompany, user?.email]);
 
   return (
     <QueryClientProvider client={queryClient}>

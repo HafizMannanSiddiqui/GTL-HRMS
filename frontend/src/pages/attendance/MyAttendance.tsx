@@ -277,7 +277,7 @@ export default function MyAttendance() {
               </Tag>
             </Tooltip>
             <Tooltip title="Apply for leave for this date">
-              <Tag color="orange" style={{ cursor: 'pointer', fontSize: 10 }} onClick={() => window.location.href = '/my/apply-leave'}>
+              <Tag color="orange" style={{ cursor: 'pointer', fontSize: 10 }} onClick={() => window.location.href = '/my/leaves'}>
                 Apply Leave
               </Tag>
             </Tooltip>
@@ -326,10 +326,22 @@ export default function MyAttendance() {
     },
     { title: 'Check-In', dataIndex: 'checkin', width: 200 },
     {
-      title: 'Check-Out', dataIndex: 'checkout', width: 200,
+      title: 'Check-Out', dataIndex: 'checkout', width: 220,
       render: (v: string, r: any) => {
-        if (r.isLive) return <Tag color="green">In Office</Tag>;
-        if (r.isMissedCheckout) return <Tag color="orange">Auto: 23:59:59</Tag>;
+        if (r.isLive) return <Tag color="green">In Office — working</Tag>;
+        if (r.isMissedCheckout) return (
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Tag color="orange">Auto-closed</Tag>
+            <Tag color="blue" style={{ cursor: 'pointer', fontSize: 10 }} onClick={() => openFixModal(r, 'missed')}>
+              <EditOutlined /> Request Fix
+            </Tag>
+          </span>
+        );
+        if (r.status === 'present' && !v && !r.isLive) return (
+          <Tag color="red" style={{ cursor: 'pointer' }} onClick={() => openFixModal(r, 'missed')}>
+            <EditOutlined /> No checkout — Request
+          </Tag>
+        );
         return v;
       },
     },
@@ -341,14 +353,45 @@ export default function MyAttendance() {
 
   return (
     <div>
-      <Typography.Title level={4}>My Attendance</Typography.Title>
+      <div className="page-header">
+        <div className="page-title"><ClockCircleOutlined style={{ marginRight: 8 }} />My Attendance</div>
+        <Space>
+          <Select value={month} onChange={setMonth} style={{ width: 140 }}
+            options={months.map((m, i) => ({ label: m, value: i + 1 }))} />
+          <Select value={year} onChange={setYear} style={{ width: 100 }}
+            options={[2024, 2025, 2026, 2027].map((y) => ({ label: String(y), value: y }))} />
+        </Space>
+      </div>
 
-      <Space style={{ marginBottom: 16 }}>
-        <Select value={month} onChange={setMonth} style={{ width: 140 }}
-          options={months.map((m, i) => ({ label: m, value: i + 1 }))} />
-        <Select value={year} onChange={setYear} style={{ width: 100 }}
-          options={[2024, 2025, 2026, 2027].map((y) => ({ label: String(y), value: y }))} />
-      </Space>
+      {/* Summary Stats */}
+      <Card size="small" style={{ borderRadius: 12, marginBottom: 16, border: '2px solid var(--brand-primary, #154360)' }}>
+        <Row gutter={12}>
+          <Col xs={8} md={4}>
+            <Statistic title="Present" value={presentDays} suffix={`/ ${workingDays}`}
+              valueStyle={{ color: '#52c41a', fontSize: 20, fontWeight: 800 }} />
+          </Col>
+          <Col xs={8} md={4}>
+            <Statistic title="Absent" value={absentDays}
+              valueStyle={{ color: absentDays > 0 ? '#ff4d4f' : '#52c41a', fontSize: 20, fontWeight: 800 }} />
+          </Col>
+          <Col xs={8} md={4}>
+            <Statistic title="Leaves" value={leaveDayCount}
+              valueStyle={{ color: '#fa8c16', fontSize: 20, fontWeight: 800 }} />
+          </Col>
+          <Col xs={8} md={4}>
+            <Statistic title="Total Hours" value={`${totalH}h ${totalM}m`}
+              valueStyle={{ color: 'var(--brand-primary)', fontSize: 18, fontWeight: 800 }} />
+          </Col>
+          <Col xs={8} md={4}>
+            <Statistic title="Avg/Day" value={`${avgH}h ${avgM}m`}
+              valueStyle={{ color: avgH < 8 ? '#ff4d4f' : '#52c41a', fontSize: 18, fontWeight: 800 }} />
+          </Col>
+          <Col xs={8} md={4}>
+            <Statistic title="Issues" value={missedCheckouts + suspiciousCount}
+              valueStyle={{ color: (missedCheckouts + suspiciousCount) > 0 ? '#ff4d4f' : '#52c41a', fontSize: 20, fontWeight: 800 }} />
+          </Col>
+        </Row>
+      </Card>
 
       {(suspiciousCount > 0 || missedCheckouts > 0) && (
         <div style={{ background: '#fff2f0', border: '1px solid #ffccc7', borderRadius: 8, padding: '14px 18px', marginBottom: 16 }}>

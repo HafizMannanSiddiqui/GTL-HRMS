@@ -48,7 +48,7 @@ export default function Holidays() {
             options={[2024, 2025, 2026, 2027].map(y => ({ label: String(y), value: y }))} />
           {isAdmin && (
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowAdd(true)}
-              style={{ background: '#e74c3c', borderColor: '#e74c3c', borderRadius: 20 }}>
+              style={{ background: 'var(--brand-accent, #e74c3c)', borderColor: 'var(--brand-accent, #e74c3c)', borderRadius: 20 }}>
               Add Holiday
             </Button>
           )}
@@ -59,7 +59,7 @@ export default function Holidays() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#154360', color: '#fff' }}>
+              <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Holiday</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>From</th>

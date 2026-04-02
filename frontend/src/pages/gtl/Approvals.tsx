@@ -172,7 +172,7 @@ export default function Approvals() {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', minWidth: 920, borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr style={{ background: '#154360', color: '#fff' }}>
+                    <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                       <th style={{ width: 50, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Sr. No</th>
                       <th style={{ width: 100, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Username</th>
                       <th style={{ width: 120, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Date</th>

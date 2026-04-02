@@ -192,7 +192,7 @@ export default function UserList() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', minWidth: 1100, borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#154360', color: '#fff' }}>
+              <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 50, cursor: 'pointer' }} onClick={() => toggleSort('id')}>ID{sortIcon('id')}</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, cursor: 'pointer' }} onClick={() => toggleSort('username')}>Username{sortIcon('username')}</th>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, cursor: 'pointer' }} onClick={() => toggleSort('displayName')}>Display Name{sortIcon('displayName')}</th>

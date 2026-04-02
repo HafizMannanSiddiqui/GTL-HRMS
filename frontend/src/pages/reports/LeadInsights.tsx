@@ -136,7 +136,7 @@ export default function LeadInsights() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#154360', color: '#fff' }}>
+                <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>#</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Name</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Team</th>
@@ -222,7 +222,7 @@ export default function LeadInsights() {
             <Card title={<><FileTextOutlined style={{ color: '#ff4d4f', marginRight: 8 }} />Present But No GTL ({data.noGtl.count})</>}
               size="small" style={{ borderRadius: 10, marginBottom: 12 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr style={{ background: '#154360', color: '#fff' }}>
+                <thead><tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>#</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Name</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Team</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Days Present</th>
                 </tr></thead>
@@ -242,7 +242,7 @@ export default function LeadInsights() {
             <Card title={<><WarningOutlined style={{ color: '#fa8c16', marginRight: 8 }} />Missed Checkouts ({data.missedCheckouts.users.length})</>}
               size="small" style={{ borderRadius: 10, marginBottom: 12 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr style={{ background: '#154360', color: '#fff' }}>
+                <thead><tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>#</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Name</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Team</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Count</th>
                 </tr></thead>
@@ -262,7 +262,7 @@ export default function LeadInsights() {
             <Card title={<><ClockCircleOutlined style={{ color: '#722ed1', marginRight: 8 }} />Low Hours ({data.lowHours.count})</>}
               size="small" style={{ borderRadius: 10, marginBottom: 12 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr style={{ background: '#154360', color: '#fff' }}>
+                <thead><tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>#</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Name</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Total Hours</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Days</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Avg/Day</th>
@@ -284,7 +284,7 @@ export default function LeadInsights() {
             <Card title={<><ExclamationCircleOutlined style={{ color: '#1677ff', marginRight: 8 }} />Pending Approvals ({data.pendingApprovals.count})</>}
               size="small" style={{ borderRadius: 10, marginBottom: 12 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr style={{ background: '#154360', color: '#fff' }}>
+                <thead><tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>#</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Name</th>
                   <th style={{ padding: '6px 12px', fontSize: 12, textAlign: 'center' }}>Pending</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Oldest</th>
@@ -305,7 +305,7 @@ export default function LeadInsights() {
             <Card title={<><UserOutlined style={{ color: '#f5222d', marginRight: 8 }} />Late Arrivals ({data.lateArrivals.count})</>}
               size="small" style={{ borderRadius: 10, marginBottom: 12 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr style={{ background: '#154360', color: '#fff' }}>
+                <thead><tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>#</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Name</th>
                   <th style={{ padding: '6px 12px', fontSize: 12 }}>Team</th><th style={{ padding: '6px 12px', fontSize: 12 }}>Count</th>
                 </tr></thead>

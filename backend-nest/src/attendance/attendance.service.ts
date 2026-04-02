@@ -415,13 +415,32 @@ export class AttendanceService {
 
   async createRequest(data: any) {
     try {
+      // Validate checkout date — must match checkin date unless late shift (checkin after 15:00)
+      if (data.checkinDate && data.checkoutDate && data.checkinDate !== data.checkoutDate) {
+        const ciTime = data.checkinTime || '09:00:00';
+        const ciHour = parseInt(ciTime.split(':')[0]);
+        // Only allow next-day checkout if checkin is after 15:00 (3 PM)
+        if (ciHour < 15) {
+          return { error: 'Checkout date must be the same as checkin date. Only late shifts (after 3 PM) can have next-day checkout.' };
+        }
+        // Check the dates are consecutive (not weeks apart)
+        const ci = new Date(data.checkinDate);
+        const co = new Date(data.checkoutDate);
+        const diffDays = (co.getTime() - ci.getTime()) / (1000 * 60 * 60 * 24);
+        if (diffDays > 1) {
+          return { error: 'Checkout date cannot be more than 1 day after checkin date.' };
+        }
+      }
+      // Default checkout date = checkin date if not provided
+      const checkoutDate = data.checkoutDate || data.checkinDate;
+
       const result = await this.prisma.attendanceRequest.create({
         data: {
           requesterId: data.requesterId,
           attendanceType: data.attendanceType || 'full_day',
           checkinDate: data.checkinDate ? new Date(data.checkinDate) : null,
           checkinTime: data.checkinTime ? new Date(`1970-01-01T${data.checkinTime}`) : null,
-          checkoutDate: data.checkoutDate ? new Date(data.checkoutDate) : data.checkinDate ? new Date(data.checkinDate) : null,
+          checkoutDate: checkoutDate ? new Date(checkoutDate) : null,
           checkoutTime: data.checkoutTime ? new Date(`1970-01-01T${data.checkoutTime}`) : null,
           description: data.description || null,
           status: 1,

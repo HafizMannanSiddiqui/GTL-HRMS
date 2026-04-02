@@ -39,13 +39,7 @@ export default function Sidebar({ collapsed, onCollapse }: Props) {
     { key: 'hrms-label', type: 'group' as const, label: 'HRMS' },
     { key: '/my/profile', icon: <ProfileOutlined />, label: 'Personal' },
     { key: '/my/attendance', icon: <CalendarOutlined />, label: 'My Attendance' },
-    {
-      key: 'my-leaves', icon: <ScheduleOutlined />, label: 'Leaves',
-      children: [
-        { key: '/my/leaves', icon: <ScheduleOutlined />, label: 'My Leaves' },
-        { key: '/my/apply-leave', icon: <ScheduleOutlined />, label: 'Apply Leave' },
-      ],
-    },
+    { key: '/my/leaves', icon: <ScheduleOutlined />, label: 'Leaves' },
     { key: '/my/wfh', icon: <CalendarOutlined />, label: 'Work From Home' },
     { key: '/my/attendance-requests', icon: <CalendarOutlined />, label: 'Attendance Requests' },
     { key: '/my/weekend-assignments', icon: <CalendarOutlined />, label: 'Weekend Assignments' },
