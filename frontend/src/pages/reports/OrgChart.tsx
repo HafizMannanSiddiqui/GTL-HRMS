@@ -198,9 +198,9 @@ export default function OrgChart() {
           { value: 'department', icon: <AppstoreOutlined />, label: 'By Department' },
         ]} />
         <Input prefix={<SearchOutlined />} placeholder="Search name or designation..." allowClear
-          onChange={e => setSearch(e.target.value)} style={{ width: 260 }} />
+          onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 260 }} />
         {view !== 'department' && (
-          <Select placeholder="All Hierarchies" allowClear showSearch optionFilterProp="label" style={{ width: 250 }}
+          <Select placeholder="All Hierarchies" allowClear showSearch optionFilterProp="label" style={{ width: '100%', maxWidth: 250 }}
             onChange={setRootFilter} options={managers} />
         )}
         <span style={{ color: '#8c8c8c', fontSize: 13 }}>{countNodes(tree)} people</span>

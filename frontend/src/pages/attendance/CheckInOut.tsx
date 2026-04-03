@@ -64,8 +64,10 @@ export default function CheckInOut() {
   let workingHours = '-';
   if (todayRecord?.checkinTime) {
     const ci = dayjs(`${today} ${todayRecord.checkinTime}`);
-    const end = todayRecord.checkoutTime ? dayjs(`${today} ${todayRecord.checkoutTime}`) : time;
-    const diff = end.diff(ci, 'minute');
+    const coDate = todayRecord.checkoutDate || today;
+    const end = todayRecord.checkoutTime ? dayjs(`${coDate} ${todayRecord.checkoutTime}`) : time;
+    let diff = end.diff(ci, 'minute');
+    if (diff < 0) diff += 1440; // cross-midnight: add 24 hours
     const h = Math.floor(diff / 60);
     const m = diff % 60;
     workingHours = `${h}h ${m}m`;

@@ -87,7 +87,7 @@ export default function AttendanceRequests() {
       </div>
 
       <div style={{ overflowX: 'auto', marginTop: 16 }}>
-        <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
               <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>

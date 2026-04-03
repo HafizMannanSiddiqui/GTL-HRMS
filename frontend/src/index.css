@@ -5,6 +5,7 @@
   --brand-primary-bg: #EBF5FB;
   --brand-primary-bg-light: #d4eaf7;
   --brand-accent: #e74c3c;
+  --brand-sidebar: #001529;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
@@ -45,10 +46,10 @@ html, body, #root { width: 100%; height: 100%; overflow-x: hidden; }
   align-items: center;
 }
 
-/* Week group headers */
+/* Week group headers — light instead of dark */
 .week-header {
-  background: var(--brand-primary);
-  color: #fff;
+  background: var(--brand-primary-bg, #f0f7ff);
+  color: var(--brand-primary, #154360);
   padding: 8px 14px;
   border-radius: 4px;
   display: flex;
@@ -57,7 +58,7 @@ html, body, #root { width: 100%; height: 100%; overflow-x: hidden; }
   user-select: none;
   transition: background 0.2s;
 }
-.week-header:hover { background: var(--brand-primary-light); }
+.week-header:hover { background: var(--brand-primary-bg, #e0edf5); filter: brightness(0.97); }
 .week-header .week-label { font-weight: 700; min-width: 90px; }
 .week-header .week-range { flex: 1; }
 .week-header .week-hours { font-weight: 600; background: rgba(255,255,255,0.15); padding: 2px 12px; border-radius: 10px; font-size: 13px; }
@@ -68,12 +69,12 @@ html, body, #root { width: 100%; height: 100%; overflow-x: hidden; }
 
 /* Table styling */
 .gtl-table .ant-table-thead > tr > th {
-  background: var(--brand-primary) !important;
-  color: #fff !important;
-  font-weight: 600 !important;
+  background: linear-gradient(135deg, var(--brand-primary-bg, #EBF5FB), var(--brand-primary-bg-light, #d4eaf7)) !important;
+  color: var(--brand-primary, #154360) !important;
+  font-weight: 700 !important;
   font-size: 13px !important;
   padding: 8px 12px !important;
-  border: none !important;
+  border-bottom: 2px solid var(--brand-primary-bg-light, #d4eaf7) !important;
 }
 .gtl-table .ant-table-tbody > tr > td {
   padding: 7px 12px !important;
@@ -181,14 +182,16 @@ html, body, #root { width: 100%; height: 100%; overflow-x: hidden; }
 /* Collapse customization for timesheet */
 .timesheet-collapse .ant-collapse-item { border: none !important; margin-bottom: 6px; }
 .timesheet-collapse .ant-collapse-header {
-  background: var(--brand-primary) !important;
-  color: #fff !important;
-  border-radius: 4px !important;
+  background: linear-gradient(135deg, var(--brand-primary-bg, #EBF5FB), var(--brand-primary-bg-light, #d4eaf7)) !important;
+  color: var(--brand-primary, #154360) !important;
+  border-radius: 8px !important;
   padding: 8px 14px !important;
   font-size: 14px !important;
+  font-weight: 600 !important;
+  border: 1px solid var(--brand-primary-bg-light, #d4eaf7) !important;
 }
-.timesheet-collapse .ant-collapse-header .ant-collapse-expand-icon { color: #fff !important; }
-.timesheet-collapse .ant-collapse-content { border: 1px solid #e8e8e8 !important; border-top: none !important; }
+.timesheet-collapse .ant-collapse-header .ant-collapse-expand-icon { color: var(--brand-primary, #154360) !important; }
+.timesheet-collapse .ant-collapse-content { border: 1px solid #e8ecf0 !important; border-top: none !important; border-radius: 0 0 8px 8px !important; }
 .timesheet-collapse .ant-collapse-content-box { padding: 0 !important; }
 
 /* No record found */
@@ -220,6 +223,21 @@ html, body, #root { width: 100%; height: 100%; overflow-x: hidden; }
   font-size: 14px !important;
 }
 
+/* ── 3D gradient stat cards ── */
+.stat-card-3d {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card-3d:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+}
+
+/* ── Cards global: brand-tinted off-white ── */
+.ant-card {
+  background: #fafbfc !important;
+  border-color: var(--brand-primary-bg-light, #e8ecf0) !important;
+}
+
 /* ── Smooth scrolling & transitions ── */
 html { scroll-behavior: smooth; }
 .ant-layout-content { transition: all 0.2s ease; }
@@ -228,77 +246,159 @@ html { scroll-behavior: smooth; }
 /* RESPONSIVE — Mobile & Tablet                           */
 /* ═══════════════════════════════════════════════════════ */
 
+/* Content area padding + off-white background */
+.ant-layout-content { padding: 20px 24px !important; overflow-x: hidden; background: #f5f6f8 !important; }
+
 /* Tablet (< 992px) */
 @media (max-width: 992px) {
+  .ant-layout-content { padding: 16px !important; }
   .form-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
   .page-header { flex-direction: column; align-items: flex-start !important; gap: 10px !important; }
   .page-header .page-filters { width: 100%; flex-wrap: wrap; }
   .filter-bar { flex-wrap: wrap; }
-  .ant-layout-sider { position: fixed !important; z-index: 100; }
+
+  /* Sidebar overlay on tablet */
+  .ant-layout-sider { position: fixed !important; z-index: 100; height: 100vh; }
+  .ant-layout-sider-collapsed {
+    width: 0 !important; min-width: 0 !important; max-width: 0 !important;
+    flex: 0 0 0 !important; overflow: hidden;
+  }
 }
 
 /* Mobile (< 768px) */
 @media (max-width: 768px) {
-  .page-heading { font-size: 18px !important; }
-  .page-header .page-title { font-size: 18px !important; }
+  .ant-layout-content { padding: 12px 10px !important; }
+  .page-heading { font-size: 17px !important; margin-bottom: 12px !important; }
+  .page-header .page-title { font-size: 17px !important; }
 
-  /* Stack Ant Row/Col */
-  .ant-row { flex-direction: column !important; }
-  .ant-col { flex: 0 0 100% !important; max-width: 100% !important; }
-  .ant-col-xs-24 { flex: 0 0 100% !important; max-width: 100% !important; }
+  /* Tables: scrollable with fade indicator */
+  table { font-size: 12px; }
+  th { padding: 5px 6px !important; font-size: 10px !important; white-space: nowrap; }
+  td { padding: 5px 6px !important; font-size: 11px !important; }
 
-  /* Tables scroll horizontally */
-  table { min-width: 600px !important; }
-  th, td { padding: 5px 8px !important; font-size: 11px !important; }
+  /* All table containers scroll horizontally */
+  div:has(> table),
+  .ant-table-wrapper,
+  [style*="overflowX"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
 
-  /* Cards */
-  .ant-card { border-radius: 8px !important; }
+  /* Sticky first column for key tables */
+  table th:first-child, table td:first-child {
+    position: sticky; left: 0; z-index: 1;
+    background: inherit;
+  }
+
+  /* Fix page header stacking */
+  .page-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .page-header .page-title { font-size: 16px !important; }
+  .page-header .page-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .page-header .page-filters > * { flex: 1 1 auto; min-width: 0; }
+
+  /* Filter bars wrap */
+  .filter-bar { gap: 6px !important; }
+  .filter-bar > * { flex: 1 1 auto; min-width: 0; }
+
+  /* Form grids single column */
+  .form-grid { grid-template-columns: 1fr !important; }
+
+  /* Ant Collapse compact */
+  .ant-collapse-header { padding: 6px 10px !important; font-size: 12px !important; }
+
+  /* Week headers compact */
+  .week-header { padding: 5px 8px !important; font-size: 11px !important; flex-wrap: wrap; }
+  .week-header .week-label { font-size: 11px !important; min-width: auto !important; }
+
+  /* Cards compact */
   .ant-card-body { padding: 12px !important; }
 
-  /* Forms */
-  .clean-form .ant-select-selector { height: 34px !important; }
-  .clean-form .ant-picker { height: 34px !important; }
-
-  /* Sidebar auto-collapse on mobile */
-  .ant-layout-sider {
-    position: fixed !important;
-    z-index: 100;
-    height: 100vh;
-  }
-  .ant-layout-sider-collapsed {
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    flex: 0 0 0 !important;
-  }
-
-  /* Modals full-width on mobile */
-  .ant-modal { max-width: calc(100vw - 16px) !important; margin: 8px !important; }
+  /* Modals full-width */
+  .ant-modal { max-width: calc(100vw - 16px) !important; margin: 8px auto !important; top: 20px !important; }
   .ant-modal-content { padding: 12px !important; }
 
-  /* Week headers wrap */
+  /* Week headers */
   .week-header { flex-wrap: wrap; font-size: 12px !important; padding: 6px 10px !important; }
   .week-header .week-label { min-width: auto !important; }
 
   /* Tabs scroll on mobile */
-  .ant-tabs-nav { overflow-x: auto !important; }
-  .ant-tabs-tab { padding: 8px 10px !important; font-size: 12px !important; }
+  .ant-tabs-nav { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+  .ant-tabs-nav-list { flex-wrap: nowrap !important; }
+  .ant-tabs-tab { padding: 6px 8px !important; font-size: 12px !important; white-space: nowrap; }
+  .ant-tabs-tab .ant-tag { font-size: 10px !important; padding: 0 4px !important; margin: 0 !important; }
 
-  /* Buttons */
-  .submit-btn { padding: 4px 28px !important; height: 36px !important; font-size: 14px !important; }
-  .download-btn { padding: 4px 16px !important; height: 32px !important; }
+  /* Ant Table responsive */
+  .ant-table-wrapper { overflow-x: auto !important; }
+  .ant-table { min-width: 500px; }
 
-  /* Collapse */
+  /* Buttons smaller */
+  .submit-btn { padding: 4px 24px !important; height: 36px !important; font-size: 13px !important; }
+  .download-btn { padding: 4px 14px !important; height: 30px !important; font-size: 12px !important; }
+
+  /* Collapse compact */
   .ant-collapse-header { padding: 8px 12px !important; }
 
-  /* Hide less important columns on mobile */
+  /* Hide non-essential on mobile */
   .hide-mobile { display: none !important; }
+
+  /* Ant Select/Picker smaller */
+  .ant-select { font-size: 12px !important; }
+  .ant-picker { font-size: 12px !important; }
 }
 
 /* Small phones (< 480px) */
 @media (max-width: 480px) {
-  .page-heading { font-size: 16px !important; padding-bottom: 6px !important; }
+  .ant-layout-content { padding: 8px 6px !important; }
+  .page-heading { font-size: 15px !important; padding-bottom: 6px !important; border-bottom-width: 2px !important; }
+  .page-header .page-title { font-size: 15px !important; }
+  .page-header .page-filters .ant-select { max-width: 140px !important; }
+  .page-header .page-filters .ant-input-affix-wrapper { max-width: 160px !important; }
+
+  /* Stat cards — smaller on phone */
   .ant-statistic-title { font-size: 10px !important; }
   .ant-statistic-content { font-size: 16px !important; }
-  .ant-avatar { width: 32px !important; height: 32px !important; font-size: 13px !important; }
+  .ant-statistic-content-value { font-size: 16px !important; }
+  .ant-statistic-content-suffix { font-size: 11px !important; }
+
+  /* All cards reduce padding */
+  .ant-card { margin-bottom: 8px !important; }
+  .ant-card-body { padding: 10px !important; }
+  .ant-card-head { padding: 0 10px !important; min-height: 36px !important; }
+  .ant-card-head-title { font-size: 13px !important; }
+
+  /* Buttons smaller */
+  .ant-btn { font-size: 12px !important; padding: 2px 10px !important; }
+  .ant-btn-lg { height: 34px !important; font-size: 12px !important; padding: 4px 16px !important; }
+  .ant-tag { font-size: 10px !important; padding: 0 4px !important; line-height: 18px !important; white-space: normal !important; max-width: 100%; word-break: break-word; }
+
+  /* Avatar smaller */
+  .ant-avatar { width: 28px !important; height: 28px !important; font-size: 12px !important; line-height: 28px !important; }
+  .ant-avatar-lg { width: 36px !important; height: 36px !important; font-size: 14px !important; }
+
+  /* Typography */
+  .ant-typography h3, h3.ant-typography { font-size: 18px !important; }
+  .ant-typography h4, h4.ant-typography { font-size: 15px !important; }
+  .ant-typography h5, h5.ant-typography { font-size: 13px !important; }
+
+  /* Inline stat numbers in cards */
+  [style*="fontSize: 28"], [style*="fontSize: 30"], [style*="fontSize: 32"] {
+    font-size: 20px !important;
+  }
+  [style*="fontSize: 22"], [style*="fontSize: 24"], [style*="fontSize: 26"] {
+    font-size: 18px !important;
+  }
+
+  /* Progress circles smaller */
+  .ant-progress-circle { width: 40px !important; height: 40px !important; }
+
+  /* Grids — smaller minimum */
+  [style*="gridTemplateColumns"] {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+  }
 }

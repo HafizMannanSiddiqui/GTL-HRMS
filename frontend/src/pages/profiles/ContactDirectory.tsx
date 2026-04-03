@@ -29,8 +29,8 @@ export default function ContactDirectory() {
       <div className="page-heading">Employee Directory</div>
       <div className="filter-bar" style={{ flexWrap: 'wrap' }}>
         <Input prefix={<SearchOutlined />} placeholder="Search name, email, username..." allowClear
-          onChange={e => setSearch(e.target.value)} style={{ width: 280 }} />
-        <Select placeholder="All Teams" allowClear showSearch optionFilterProp="label" style={{ width: 200 }}
+          onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 280 }} />
+        <Select placeholder="All Teams" allowClear showSearch optionFilterProp="label" style={{ width: '100%', maxWidth: 200 }}
           onChange={(v) => { setTeamId(v); setSubTeamId(undefined); }}
           options={parentTeams.map((t: any) => ({ label: t.teamName, value: t.id }))} />
         {subTeams.length > 0 && (
@@ -47,7 +47,7 @@ export default function ContactDirectory() {
       </div>
 
       {isLoading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div> : viewMode === 'card' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
           {(data || []).map((u: any) => (
             <div key={u.id} style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: 10, padding: 16, display: 'flex', gap: 14, alignItems: 'center' }}>
               <Avatar size={44} style={{ background: 'var(--brand-primary, #1677ff)', fontWeight: 700, fontSize: 18, flexShrink: 0 }}>

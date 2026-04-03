@@ -24,11 +24,11 @@ export default function BloodGroup() {
         <div className="page-title">Blood Group Report</div>
         <div className="page-filters">
           <Input prefix={<SearchOutlined />} placeholder="Search name..." allowClear
-            onChange={e => setSearch(e.target.value)} style={{ width: 220 }} />
+            onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 220 }} />
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: 16, marginTop: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16, marginTop: 16 }}>
         {bloodTypes.map(bg => {
           const people = (groups[bg] || []).filter((p: any) =>
             search ? p.name.toLowerCase().includes(search.toLowerCase()) : true

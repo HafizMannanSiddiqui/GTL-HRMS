@@ -19,13 +19,13 @@ export default function EmployeeList() {
         <div className="page-title">Employee Profiles ({(data || []).length})</div>
         <div className="page-filters">
           <Input prefix={<SearchOutlined />} placeholder="Search name, username, CNIC, contact..."
-            allowClear onChange={e => setSearch(e.target.value)} style={{ width: 350 }} />
+            allowClear onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 350 }} />
         </div>
       </div>
 
       {isLoading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div> : (
         <div style={{ overflowX: 'auto', marginTop: 16 }}>
-          <table style={{ width: '100%', minWidth: 1000, borderCollapse: 'collapse' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>

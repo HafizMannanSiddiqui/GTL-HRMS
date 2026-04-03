@@ -20,7 +20,7 @@ export default function ChangeRequests() {
 
       {isLoading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div> : (
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', minWidth: 800, borderCollapse: 'collapse' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>

@@ -71,10 +71,10 @@ export default function Approvals() {
       {/* Team members with attendance + pending status */}
       {(teamMembers || []).length > 0 && (
         <Card size="small" style={{ borderRadius: 10, marginBottom: 20 }}>
-          <div style={{ fontWeight: 600, color: '#154360', marginBottom: 10, fontSize: 14 }}>
+          <div style={{ fontWeight: 600, color: 'var(--brand-primary, #154360)', marginBottom: 10, fontSize: 14 }}>
             My Team — Today's Status
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8 }}>
             {(teamMembers || []).map((m: any) => {
               const hasPending = pendingUserIds.has(m.id);
               return (
@@ -170,9 +170,9 @@ export default function Approvals() {
               </div>
 
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', minWidth: 920, borderCollapse: 'collapse' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
+                    <tr style={{ background: 'linear-gradient(135deg, var(--brand-primary-bg, #EBF5FB), var(--brand-primary-bg-light, #d4eaf7))', color: 'var(--brand-primary, #154360)' }}>
                       <th style={{ width: 50, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Sr. No</th>
                       <th style={{ width: 100, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Username</th>
                       <th style={{ width: 120, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Date</th>
@@ -207,7 +207,7 @@ export default function Approvals() {
                         </td>
                       </tr>
                     ))}
-                    <tr style={{ background: '#EBF5FB' }}>
+                    <tr style={{ background: 'var(--brand-primary-bg, #EBF5FB)' }}>
                       <td colSpan={6} style={{ textAlign: 'right', padding: '6px 12px', fontWeight: 700, fontSize: 13 }}>Total:</td>
                       <td colSpan={2} style={{ padding: '6px 12px', fontWeight: 700, fontSize: 13 }}>{week.totalHours}</td>
                     </tr>

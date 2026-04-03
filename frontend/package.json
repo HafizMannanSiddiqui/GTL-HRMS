@@ -10,15 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.4.0",
+    "@tanstack/react-query": "^5.56.0",
+    "antd": "^5.21.0",
+    "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
-    "antd": "^5.21.0",
-    "@ant-design/icons": "^5.4.0",
-    "axios": "^1.7.7",
-    "@tanstack/react-query": "^5.56.0",
-    "zustand": "^4.5.5",
-    "dayjs": "^1.11.13"
+    "recharts": "^3.8.1",
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.8",

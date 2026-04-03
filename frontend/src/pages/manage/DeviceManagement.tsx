@@ -141,7 +141,7 @@ export default function DeviceManagement() {
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
                 <Input prefix={<SearchOutlined />} placeholder="Search name, card number..."
-                  allowClear onChange={e => setSearch(e.target.value)} style={{ width: 300 }} />
+                  allowClear onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 300 }} />
                 <Button type="primary" icon={<PlusOutlined />} onClick={() => setAddUserModal(true)}
                   style={{ background: 'var(--brand-accent, #e74c3c)', borderColor: 'var(--brand-accent, #e74c3c)', borderRadius: 20 }}>
                   Add Device User
@@ -150,7 +150,7 @@ export default function DeviceManagement() {
 
               {isLoading ? <Spin /> : (
                 <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', minWidth: 800, borderCollapse: 'collapse' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                         <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>UID</th>

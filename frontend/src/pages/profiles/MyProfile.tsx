@@ -152,7 +152,7 @@ export default function MyProfile() {
       {/* ═══ Hero Profile Card ═══ */}
       <div style={{ borderRadius: 16, overflow: 'hidden', marginBottom: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
         {/* Top gradient banner */}
-        <div style={{ background: 'linear-gradient(135deg, var(--brand-primary, #154360), var(--brand-primary-light, #1a5276))', padding: '32px 32px 60px', position: 'relative' }}>
+        <div style={{ background: 'linear-gradient(135deg, var(--brand-primary, #154360), var(--brand-primary-light, #1a5276))', padding: '32px 32px 56px', position: 'relative' }}>
           <div style={{ position: 'absolute', top: 16, right: 20 }}>
             <Progress type="circle" percent={pct} size={56} strokeColor={pct > 60 ? '#52c41a' : pct > 30 ? '#fa8c16' : '#ff4d4f'}
               format={(p) => <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>{p}%</span>} />
@@ -165,22 +165,22 @@ export default function MyProfile() {
         </div>
 
         {/* Profile info card overlapping the banner */}
-        <div style={{ background: '#fff', padding: '0 32px 24px', marginTop: -40 }}>
-          <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        <div style={{ background: '#fff', padding: '0 32px 24px', marginTop: -36 }}>
+          <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap', paddingTop: 0 }}>
             {/* Avatar */}
             <Avatar size={96} style={{
               background: 'var(--brand-primary, #1677ff)', fontSize: 40, fontWeight: 700,
-              border: '4px solid #fff', boxShadow: '0 2px 12px rgba(0,0,0,0.15)', marginTop: -20,
+              border: '4px solid #fff', boxShadow: '0 2px 12px rgba(0,0,0,0.15)', marginTop: -48, flexShrink: 0,
             }}>
               {profile?.firstName?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase()}
             </Avatar>
 
-            {/* Name + designation */}
-            <div style={{ flex: 1, minWidth: 200 }}>
+            {/* Name + designation — pushed below the banner */}
+            <div style={{ flex: 1, minWidth: 200, paddingTop: 8 }}>
               <Typography.Title level={3} style={{ margin: 0, lineHeight: 1.2 }}>
                 {profile?.firstName || user?.displayName?.split(' ')[0]} {profile?.lastName || ''}
               </Typography.Title>
-              <div style={{ fontSize: 14, color: '#666' }}>{profile?.jobTitle || user?.designation?.name || '@' + user?.username}</div>
+              <div style={{ fontSize: 14, color: '#666', marginTop: 2 }}>{profile?.jobTitle || user?.designation?.name || '@' + user?.username}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>
                 {(myTeamsData?.teams || []).map((t: any) => (
                   <Tag key={t.id} color={t.isPrimary ? 'blue' : 'cyan'} style={{ fontSize: 11 }}>

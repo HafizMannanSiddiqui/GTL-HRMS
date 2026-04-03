@@ -176,7 +176,7 @@ export default function Kiosk() {
           )}
         </div>
 
-        <div className="kiosk-footer">UNIFIED PORTAL — ATTENDANCE MANAGEMENT SYSTEM</div>
+        <div className="kiosk-footer">ATTENDANCE MANAGEMENT SYSTEM</div>
       </div>
 
       <style>{`

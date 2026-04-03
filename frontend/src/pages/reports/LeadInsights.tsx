@@ -72,7 +72,7 @@ export default function LeadInsights() {
             <Tag color="red">{absentCount} Absent</Tag>
             <Tag color="blue">{checkedOutCount} Checked Out</Tag>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 8 }}>
             {(teamToday || []).sort((a: any, b: any) => (a.isPresent === b.isPresent ? 0 : a.isPresent ? -1 : 1)).map((m: any) => (
               <div key={m.id} style={{
                 display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px',

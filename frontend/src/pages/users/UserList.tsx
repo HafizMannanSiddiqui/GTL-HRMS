@@ -175,7 +175,7 @@ export default function UserList() {
         <div className="page-title"><UserOutlined style={{ marginRight: 8 }} />Users ({data?.total || 0})</div>
         <div className="page-filters">
           <Input prefix={<SearchOutlined />} placeholder="Search name, email, username..."
-            allowClear onChange={e => { setSearch(e.target.value); setPage(1); }} style={{ width: 260 }} />
+            allowClear onChange={e => { setSearch(e.target.value); setPage(1); }} style={{ width: '100%', maxWidth: 260 }} />
           <Select placeholder="Role" allowClear style={{ width: 150 }}
             onChange={(v) => setRoleFilter(v)}
             options={[...allRoleNames].sort().map(r => ({ label: r, value: r }))} />
@@ -190,7 +190,7 @@ export default function UserList() {
 
       {isLoading ? <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div> : (
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', minWidth: 1100, borderCollapse: 'collapse' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
                 <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 50, cursor: 'pointer' }} onClick={() => toggleSort('id')}>ID{sortIcon('id')}</th>

@@ -142,11 +142,11 @@ export default function DataEntry() {
   };
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto' }}>
+    <div style={{ maxWidth: 900, margin: '0 auto', background: 'var(--brand-primary-bg, #f5f6f8)', borderRadius: 16, padding: '20px 24px', minHeight: '80vh' }}>
       <div className="page-heading"><FileTextOutlined style={{ marginRight: 8 }} />Log Work</div>
 
       {/* Date + Attendance Status */}
-      <Card size="small" style={{ borderRadius: 12, marginBottom: 16, border: `2px solid var(--brand-primary, #154360)` }}>
+      <Card size="small" style={{ borderRadius: 14, marginBottom: 16, border: '1px solid var(--brand-primary-bg-light, #e8ecf0)', background: 'linear-gradient(135deg, var(--brand-primary-bg), #fff)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
         <Row gutter={16} align="middle">
           <Col xs={24} sm={8}>
             <div style={{ fontWeight: 600, color: 'var(--brand-primary, #154360)', marginBottom: 4, fontSize: 13 }}>
@@ -201,7 +201,7 @@ export default function DataEntry() {
       <Form form={form} onFinish={onFinish} layout="vertical" className="clean-form" initialValues={{ workType: 1 }}
         style={{ opacity: isBlocked ? 0.4 : 1, pointerEvents: isBlocked ? 'none' : 'auto' }}>
 
-        <Card size="small" style={{ borderRadius: 12, marginBottom: 16 }}>
+        <Card size="small" style={{ borderRadius: 14, marginBottom: 16, border: '1px solid var(--brand-primary-bg-light, #e8ecf0)', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--brand-primary, #154360)', marginBottom: 12 }}>
             <ProjectOutlined style={{ marginRight: 6 }} />Project Details
           </div>
@@ -247,16 +247,16 @@ export default function DataEntry() {
           </Row>
         </Card>
 
-        <Card size="small" style={{ borderRadius: 12, marginBottom: 16 }}>
+        <Card size="small" style={{ borderRadius: 14, marginBottom: 16, border: '1px solid var(--brand-primary-bg-light, #e8ecf0)', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <Form.Item name="description" label={<span style={{ fontWeight: 600, color: 'var(--brand-primary, #154360)' }}>What did you work on?</span>}
             rules={[{ required: true, message: 'Describe what you did' }]}>
             <Input.TextArea rows={3} maxLength={500} showCount placeholder="Describe your tasks, deliverables..." style={{ resize: 'none' }} />
           </Form.Item>
         </Card>
 
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', padding: '16px 0 8px' }}>
           <Button type="primary" htmlType="submit" loading={mutation.isPending} disabled={isBlocked || !selectedDate || workedHours === 0}
-            size="large" style={{ borderRadius: 24, padding: '0 48px', height: 44, fontWeight: 600, fontSize: 15 }}>
+            size="large" style={{ borderRadius: 24, padding: '0 48px', height: 44, fontWeight: 600, fontSize: 15, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
             Submit Entry
           </Button>
         </div>

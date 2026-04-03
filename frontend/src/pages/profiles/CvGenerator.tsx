@@ -51,7 +51,7 @@ export default function CvGenerator() {
       <div className="page-heading"><FilePdfOutlined style={{ marginRight: 8 }} />CV Generator</div>
 
       <div className="filter-bar">
-        <Select showSearch optionFilterProp="label" style={{ width: 350 }} placeholder="Select employee..."
+        <Select showSearch optionFilterProp="label" style={{ width: '100%', maxWidth: 350 }} placeholder="Select employee..."
           value={userId} onChange={setUserId}
           options={(users?.items || []).filter((u: any) => u.isActive).map((u: any) => ({
             label: `${u.displayName || u.username} — ${u.team?.teamName || ''}`, value: u.id,

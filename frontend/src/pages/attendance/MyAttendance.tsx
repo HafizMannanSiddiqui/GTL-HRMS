@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Table, Typography, Select, Space, Tag, Card, Row, Col, Statistic, Tooltip, Modal, Form, TimePicker, Input, Button, message } from 'antd';
+import { Table, Typography, Select, Space, Tag, Card, Row, Col, Statistic, Tooltip, Modal, Form, TimePicker, Input, Button, message, Progress, Spin } from 'antd';
 import { WarningOutlined, ClockCircleOutlined, EditOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { getMyAttendance, getHolidaysForMonth, createAttendanceRequest } from '../../api/attendance';
+import { getMyAttendance, getHolidaysForMonth, createAttendanceRequest, getAttendanceRequests } from '../../api/attendance';
 import { getLeaves } from '../../api/leaves';
 import { useAuthStore } from '../../store/authStore';
 
@@ -120,6 +120,27 @@ export default function MyAttendance() {
     queryFn: () => getMyAttendance(from.format('YYYY-MM-DD'), to.format('YYYY-MM-DD')),
   });
 
+  // Fetch my attendance requests to show status per day
+  const { data: myRequests } = useQuery({
+    queryKey: ['myAttRequests', user?.id],
+    queryFn: () => getAttendanceRequests({ requesterId: user?.id }),
+    enabled: !!user?.id,
+  });
+
+  // Build request date map with full details
+  const requestDates = new Map<string, { status: number; checkinTime?: string; checkoutTime?: string; description?: string }>();
+  (myRequests || []).forEach((r: any) => {
+    if (r.checkinDate) {
+      const key = dayjs(r.checkinDate).format('YYYY-MM-DD');
+      requestDates.set(key, {
+        status: r.status,
+        checkinTime: r.checkinTime?.slice(0, 5),
+        checkoutTime: r.checkoutTime?.slice(0, 5),
+        description: r.description,
+      });
+    }
+  });
+
   // Fetch holidays from DB
   const { data: holidays } = useQuery({
     queryKey: ['holidaysMonth', year, month],
@@ -229,12 +250,21 @@ export default function MyAttendance() {
       checkoutStr = `${coDate.format('DD-MMM-YY')} ${record.checkoutTime.slice(0, 8)}`;
     }
 
+    // Check if there's a pending/approved request for this day
+    const reqInfo = requestDates.get(key);
+    const hasRequest = !!reqInfo;
+    const requestStatus = reqInfo?.status; // 1=pending, 2=approved, 3=rejected
+
     calendarData.push({
       key: d, date: `${String(d).padStart(2, '0')} ${months[month - 1].slice(0, 3)}, ${year} - ${dayNames[date.day()]}`,
       duration, durationSeconds: durSecs, isSuspicious, isMissedCheckout, isLive,
       checkin: checkinStr, checkout: checkoutStr, checkinTimeRaw: record?.checkinTime,
       status, checkinState: record?.checkinState, holidayLabel,
       isOnLeave, leaveType, leaveStatus,
+      hasRequest, requestStatus,
+      requestCheckin: reqInfo?.checkinTime,
+      requestCheckout: reqInfo?.checkoutTime,
+      requestReason: reqInfo?.description,
     });
   }
 
@@ -351,115 +381,226 @@ export default function MyAttendance() {
     },
   ];
 
+  const attPct = workingDays > 0 ? Math.round((presentDays / workingDays) * 100) : 0;
+
+  // Overtime calculation (hours above 8h per day)
+  const overtimeSeconds = calendarData.reduce((s: number, d: any) => {
+    if (d.status === 'present' && d.durationSeconds > 28800 && !d.isMissedCheckout) return s + (d.durationSeconds - 28800);
+    return s;
+  }, 0);
+  const otH = Math.floor(overtimeSeconds / 3600);
+  const otM = Math.floor((overtimeSeconds % 3600) / 60);
+
   return (
     <div>
-      <div className="page-header">
-        <div className="page-title"><ClockCircleOutlined style={{ marginRight: 8 }} />My Attendance</div>
-        <Space>
-          <Select value={month} onChange={setMonth} style={{ width: 140 }}
-            options={months.map((m, i) => ({ label: m, value: i + 1 }))} />
-          <Select value={year} onChange={setYear} style={{ width: 100 }}
-            options={[2024, 2025, 2026, 2027].map((y) => ({ label: String(y), value: y }))} />
-        </Space>
+      {/* ═══ Header ═══ */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div className="page-title" style={{ fontSize: 22, fontWeight: 700, color: '#1C2833' }}>
+          <ClockCircleOutlined style={{ marginRight: 8 }} />My Attendance
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Button size="small" onClick={() => { if (month === 1) { setMonth(12); setYear(year - 1); } else setMonth(month - 1); }}>{'<'}</Button>
+          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--brand-primary)', textAlign: 'center' }}>
+            {months[month - 1]} {year}
+          </span>
+          <Button size="small" onClick={() => { if (month === 12) { setMonth(1); setYear(year + 1); } else setMonth(month + 1); }}>{'>'}</Button>
+        </div>
       </div>
 
-      {/* Summary Stats */}
-      <Card size="small" style={{ borderRadius: 12, marginBottom: 16, border: '2px solid var(--brand-primary, #154360)' }}>
-        <Row gutter={12}>
-          <Col xs={8} md={4}>
-            <Statistic title="Present" value={presentDays} suffix={`/ ${workingDays}`}
-              valueStyle={{ color: '#52c41a', fontSize: 20, fontWeight: 800 }} />
-          </Col>
-          <Col xs={8} md={4}>
-            <Statistic title="Absent" value={absentDays}
-              valueStyle={{ color: absentDays > 0 ? '#ff4d4f' : '#52c41a', fontSize: 20, fontWeight: 800 }} />
-          </Col>
-          <Col xs={8} md={4}>
-            <Statistic title="Leaves" value={leaveDayCount}
-              valueStyle={{ color: '#fa8c16', fontSize: 20, fontWeight: 800 }} />
-          </Col>
-          <Col xs={8} md={4}>
-            <Statistic title="Total Hours" value={`${totalH}h ${totalM}m`}
-              valueStyle={{ color: 'var(--brand-primary)', fontSize: 18, fontWeight: 800 }} />
-          </Col>
-          <Col xs={8} md={4}>
-            <Statistic title="Avg/Day" value={`${avgH}h ${avgM}m`}
-              valueStyle={{ color: avgH < 8 ? '#ff4d4f' : '#52c41a', fontSize: 18, fontWeight: 800 }} />
-          </Col>
-          <Col xs={8} md={4}>
-            <Statistic title="Issues" value={missedCheckouts + suspiciousCount}
-              valueStyle={{ color: (missedCheckouts + suspiciousCount) > 0 ? '#ff4d4f' : '#52c41a', fontSize: 20, fontWeight: 800 }} />
-          </Col>
-        </Row>
-      </Card>
-
-      {(suspiciousCount > 0 || missedCheckouts > 0) && (
-        <div style={{ background: '#fff2f0', border: '1px solid #ffccc7', borderRadius: 8, padding: '14px 18px', marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <WarningOutlined style={{ color: '#ff4d4f', fontSize: 18, marginTop: 2 }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: '#1C2833', fontSize: 14, marginBottom: 6 }}>
-                Attendance Issues Detected
-              </div>
-              {missedCheckouts > 0 && (
-                <div style={{ fontSize: 13, marginBottom: 4 }}>
-                  <Tag color="error">{missedCheckouts} missed checkout{missedCheckouts > 1 ? 's' : ''}</Tag>
-                  <strong>Excluded</strong> from your total and average calculations. These days show as "Missed Checkout" and do not count toward your working hours.
-                </div>
-              )}
-              {suspiciousCount > 0 && (
-                <div style={{ fontSize: 13, marginBottom: 4 }}>
-                  <Tag color="warning">{suspiciousCount} suspicious entr{suspiciousCount > 1 ? 'ies' : 'y'}</Tag>
-                  Sessions exceeding 12 hours are <strong>capped at 12h</strong> in averages.
-                </div>
-              )}
-              <div style={{ marginTop: 8, fontSize: 13 }}>
-                <strong>How to fix:</strong> Go to{' '}
-                <a href="/my/attendance-requests" style={{ color: '#1677ff', fontWeight: 600 }}>Attendance Requests</a>
-                {' '}→ New Request → enter the correct checkout time → your Team Lead will approve it and your records will be updated.
-              </div>
+      {/* ═══ Analytics — matching reference design ═══ */}
+      <div style={{ display: 'flex', gap: 16, marginBottom: 16, flexWrap: 'wrap' }}>
+        {/* Left: Stats */}
+        <Card size="small" style={{ borderRadius: 12, flex: '1 1 500px', border: '1px solid #f0f0f0' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <span style={{ fontWeight: 600, fontSize: 14 }}>Analytics</span>
+            <span style={{ fontSize: 12, color: '#8c8c8c' }}>{months[month - 1]} {year}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ textAlign: 'center', minWidth: 60 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: '#333' }}>{presentDays}<span style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>/{workingDays}</span></div>
+              <div style={{ fontSize: 11, color: '#8c8c8c' }}>Work Schedule</div>
+              <div style={{ fontSize: 10, color: '#52c41a', fontWeight: 600 }}>{attPct}%</div>
+            </div>
+            <div style={{ textAlign: 'center', minWidth: 60 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--brand-primary)' }}>{totalH}:{String(totalM).padStart(2, '0')}</div>
+              <div style={{ fontSize: 11, color: '#8c8c8c' }}>Logged Time</div>
+              <div style={{ fontSize: 10, color: avgH >= 8 ? '#52c41a' : '#ff4d4f', fontWeight: 600 }}>Avg {avgH}h {avgM}m</div>
+            </div>
+            <div style={{ textAlign: 'center', minWidth: 60 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: '#722ed1' }}>{otH}:{String(otM).padStart(2, '0')}</div>
+              <div style={{ fontSize: 11, color: '#8c8c8c' }}>Overtime</div>
+            </div>
+            <div style={{ textAlign: 'center', minWidth: 60 }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: absentDays > 0 ? '#ff4d4f' : '#52c41a' }}>{absentDays}</div>
+              <div style={{ fontSize: 11, color: '#8c8c8c' }}>Absent</div>
+              {leaveDayCount > 0 && <div style={{ fontSize: 10, color: '#fa8c16' }}>{leaveDayCount} on leave</div>}
             </div>
           </div>
-        </div>
-      )}
+        </Card>
 
-      <Table columns={columns} dataSource={calendarData} loading={isLoading} pagination={false}
-        size="small" bordered scroll={{ x: 800 }}
-        rowClassName={(r) => r.status === 'holiday' ? 'row-holiday' : r.status === 'leave' ? 'row-leave' : r.status === 'absent' ? 'row-absent' : r.isMissedCheckout ? 'row-suspicious' : r.isSuspicious ? 'row-suspicious' : ''}
-        style={{ marginBottom: 24 }} />
+        {/* Right: Today's Status — like the Clock In card in reference */}
+        <Card size="small" style={{ borderRadius: 12, flex: '0 0 220px', border: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {(() => {
+            const todayRec = calendarData.find((d: any) => d.isLive);
+            if (todayRec) return (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 12, color: '#52c41a', fontWeight: 600, marginBottom: 8 }}>In Office</div>
+                <LiveTimer checkinTime={todayRec.checkinTimeRaw?.slice(0, 8)} />
+                <div style={{ fontSize: 11, color: '#8c8c8c', marginTop: 4 }}>Since {todayRec.checkinTimeRaw?.slice(0, 5)}</div>
+              </div>
+            );
+            const todayAbs = calendarData.find((d: any) => {
+              const dt = dayjs(`${year}-${String(month).padStart(2, '0')}-${String(d.key).padStart(2, '0')}`);
+              return dt.isSame(dayjs(), 'day');
+            });
+            if (todayAbs?.status === 'present' && todayAbs?.checkout) return (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 12, color: '#1677ff', fontWeight: 600, marginBottom: 4 }}>Checked Out</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: '#333' }}>{todayAbs.duration?.slice(0, 5)}</div>
+                <div style={{ fontSize: 11, color: '#8c8c8c' }}>Today's Hours</div>
+              </div>
+            );
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 12, color: '#8c8c8c', fontWeight: 600 }}>Today</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#ff4d4f', marginTop: 4 }}>Not Checked In</div>
+              </div>
+            );
+          })()}
+        </Card>
+      </div>
 
-      <Card style={{ borderRadius: 12 }}>
-        <Row gutter={[16, 12]}>
-          <Col xs={12} sm={8} md={4}>
-            <Statistic title={<span>Total Work Time {missedCheckouts > 0 ? <Tag color="blue" style={{ fontSize: 10 }}>excl. missed</Tag> : ''}</span>}
-              value={`${totalH}:${String(totalM).padStart(2, '0')}:${String(totalS).padStart(2, '0')}`} valueStyle={{ fontSize: 18, fontWeight: 600 }} />
-          </Col>
-          <Col xs={12} sm={8} md={4}>
-            <Statistic title={<span>Avg Work Time {missedCheckouts > 0 ? <Tag color="blue" style={{ fontSize: 10 }}>excl. missed</Tag> : ''}</span>}
-              value={`${avgH}:${String(avgM).padStart(2, '0')}:${String(avgS).padStart(2, '0')}`}
-              valueStyle={{ fontSize: 18, fontWeight: 600 }} />
-            {countableDays > 0 && <div style={{ fontSize: 11, color: '#8c8c8c' }}>Based on {countableDays} valid day{countableDays !== 1 ? 's' : ''}</div>}
-          </Col>
-          <Col xs={12} sm={8} md={4}>
-            <Statistic title="Presents" value={presentDays} valueStyle={{ fontSize: 18, fontWeight: 600, color: '#52c41a' }} />
-          </Col>
-          <Col xs={12} sm={8} md={4}>
-            <Statistic title="Absents" value={absentDays} valueStyle={{ fontSize: 18, fontWeight: 600, color: '#ff4d4f' }} />
-          </Col>
-          <Col xs={12} sm={8} md={4}>
-            <Statistic title="On Leave" value={leaveDayCount} valueStyle={{ fontSize: 18, fontWeight: 600, color: '#fa8c16' }} />
-          </Col>
-          <Col xs={12} sm={8} md={4}>
-            <Statistic title="Missed C/O" value={missedCheckouts}
-              prefix={missedCheckouts > 0 ? <WarningOutlined /> : undefined}
-              valueStyle={{ fontSize: 18, fontWeight: 600, color: missedCheckouts > 0 ? '#fa8c16' : '#52c41a' }} />
-            {missedCheckouts > 0 && <div style={{ fontSize: 11, color: '#fa8c16' }}>Not counted in avg</div>}
-          </Col>
-          <Col xs={12} sm={8} md={4}>
-            <Statistic title="Working Days" value={workingDays} valueStyle={{ fontSize: 18, fontWeight: 600 }} />
-          </Col>
-        </Row>
-      </Card>
+      {/* ═══ Attendance Table ═══ */}
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <thead>
+            <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
+              <th style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600, textAlign: 'left' }}>Date</th>
+              <th style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600 }}>Clock In</th>
+              <th style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600 }}>Clock Out</th>
+              <th style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600 }}>Duration</th>
+              <th style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600 }}>Status</th>
+              <th style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr><td colSpan={6} style={{ textAlign: 'center', padding: 40 }}><Spin /></td></tr>
+            ) : calendarData.map((day: any) => {
+              const dateFmt = dayjs(`${year}-${String(month).padStart(2, '0')}-${String(day.key).padStart(2, '0')}`);
+              const isHolidayRow = day.status === 'holiday';
+              const isAbsentRow = day.status === 'absent';
+              const isLeaveRow = day.status === 'leave';
+              const isFuture = day.status === 'future';
+
+              return (
+                <tr key={day.key} style={{
+                  borderBottom: '1px solid #f5f5f5',
+                  background: isHolidayRow ? '#f0f7ff' : isLeaveRow ? '#fffbe6' : isAbsentRow ? '#fff2f0' : '#fff',
+                  opacity: isFuture ? 0.35 : 1,
+                }}>
+                  {/* Date */}
+                  <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
+                    {dateFmt.format('ddd, DD MMM')}
+                  </td>
+
+                  {/* Clock In */}
+                  <td style={{ padding: '10px 14px', fontSize: 13, textAlign: 'center' }}>
+                    {day.status === 'present' ? (
+                      <span style={{ fontWeight: 500 }}>
+                        {day.checkinTimeRaw?.slice(0, 5)}
+                        {day.checkinState && <span style={{ fontSize: 9, color: '#8c8c8c', marginLeft: 4 }}>({day.checkinState})</span>}
+                      </span>
+                    ) : isHolidayRow ? (
+                      <Tag color="blue" style={{ fontSize: 11 }}>{day.holidayLabel}</Tag>
+                    ) : isLeaveRow ? (
+                      <Tag color={day.leaveStatus === 'approved' ? 'green' : 'gold'} style={{ fontSize: 11 }}>{day.leaveType}</Tag>
+                    ) : isAbsentRow ? (
+                      <span style={{ color: '#ff4d4f', fontWeight: 500 }}>Absent</span>
+                    ) : <span style={{ color: '#d9d9d9' }}>—</span>}
+                  </td>
+
+                  {/* Clock Out */}
+                  <td style={{ padding: '10px 14px', fontSize: 13, textAlign: 'center' }}>
+                    {day.isLive ? (
+                      <Tag color="green" style={{ fontSize: 11 }}>Still Working</Tag>
+                    ) : day.isMissedCheckout ? (
+                      <Tag color="orange" style={{ fontSize: 11 }}>Auto-closed</Tag>
+                    ) : day.checkout ? (
+                      <span>{day.checkout.split(' ')[1]?.slice(0, 5)}</span>
+                    ) : day.status === 'present' ? (
+                      <span style={{ color: '#d9d9d9' }}>—</span>
+                    ) : null}
+                  </td>
+
+                  {/* Duration */}
+                  <td style={{ padding: '10px 14px', fontSize: 13, textAlign: 'center', fontWeight: 600 }}>
+                    {day.isLive ? (
+                      <LiveTimer checkinTime={day.checkinTimeRaw?.slice(0, 8)} />
+                    ) : day.duration ? (
+                      <span style={{
+                        color: day.isSuspicious ? '#ff4d4f' : day.durationSeconds < 28800 ? '#fa8c16' : '#52c41a',
+                      }}>
+                        {day.duration}
+                        {day.isSuspicious && <WarningOutlined style={{ marginLeft: 4, color: '#ff4d4f' }} />}
+                      </span>
+                    ) : null}
+                  </td>
+
+                  {/* Status */}
+                  <td style={{ padding: '10px 14px', fontSize: 12, textAlign: 'center' }}>
+                    {day.isLive && <Tag color="green">In Office</Tag>}
+                    {day.status === 'present' && !day.isLive && !day.isMissedCheckout && day.duration && day.checkout && (
+                      <Tag color={day.durationSeconds >= 28800 ? 'green' : 'orange'}>{day.durationSeconds >= 28800 ? 'Complete' : 'Short Day'}</Tag>
+                    )}
+                    {day.isMissedCheckout && <Tag color="error">Missed Checkout</Tag>}
+                    {day.status === 'present' && !day.checkout && !day.isLive && !day.isMissedCheckout && <Tag color="red">No Checkout</Tag>}
+                  </td>
+
+                  {/* Action / Request Status */}
+                  <td style={{ padding: '10px 14px', fontSize: 12, textAlign: 'center' }}>
+                    {day.hasRequest ? (
+                      <Tooltip title={
+                        <div style={{ fontSize: 12 }}>
+                          <div style={{ fontWeight: 600, marginBottom: 4 }}>Correction Request</div>
+                          {day.requestCheckin && <div>Check-in: {day.requestCheckin}</div>}
+                          {day.requestCheckout && <div>Check-out: {day.requestCheckout}</div>}
+                          {day.requestReason && <div style={{ marginTop: 4, fontStyle: 'italic' }}>"{day.requestReason}"</div>}
+                          <div style={{ marginTop: 4, fontWeight: 600 }}>
+                            {day.requestStatus === 1 ? 'Waiting for lead approval' : day.requestStatus === 2 ? 'Approved and applied' : 'Rejected by lead'}
+                          </div>
+                        </div>
+                      }>
+                        {day.requestStatus === 1 ? <Tag color="gold" style={{ fontSize: 11, cursor: 'help' }}>Pending</Tag> :
+                         day.requestStatus === 2 ? <Tag color="green" style={{ fontSize: 11, cursor: 'help' }}>Approved</Tag> :
+                         <Tag color="red" style={{ fontSize: 11, cursor: 'help' }}>Rejected</Tag>}
+                      </Tooltip>
+                    ) : (
+                      <>
+                        {day.isMissedCheckout && (
+                          <Button size="small" type="link" style={{ fontSize: 12, color: '#fa8c16', padding: 0 }} onClick={() => openFixModal(day, 'missed')}>
+                            Fix C/O
+                          </Button>
+                        )}
+                        {day.status === 'present' && !day.checkout && !day.isLive && !day.isMissedCheckout && (
+                          <Button size="small" type="link" danger style={{ fontSize: 12, padding: 0 }} onClick={() => openFixModal(day, 'missed')}>
+                            Request
+                          </Button>
+                        )}
+                        {day.status === 'absent' && (
+                          <Button size="small" type="link" style={{ fontSize: 12, padding: 0 }} onClick={() => openFixModal(day, 'absent')}>
+                            Fix
+                          </Button>
+                        )}
+                      </>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
       {/* Fix Request Modal */}
       <Modal title={fixModal?.type === 'missed' ? 'Fix Missed Checkout' : 'Request Attendance Correction'}

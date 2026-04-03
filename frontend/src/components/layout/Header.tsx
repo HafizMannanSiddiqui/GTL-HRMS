@@ -1,4 +1,4 @@
-import { LogoutOutlined, UserOutlined, BellOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined, BellOutlined, MenuOutlined } from '@ant-design/icons';
 import { Avatar, Badge, Dropdown, Layout, Space, Tag } from 'antd';
 import type { MenuProps } from 'antd';
 import { useAuth } from '../../hooks/useAuth';
@@ -66,8 +66,10 @@ export default function Header() {
       lineHeight: '56px',
       boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
     }}>
-      {/* Left: Company tag */}
-      <div>
+      {/* Left: Menu toggle + Company tag */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <MenuOutlined style={{ fontSize: 18, cursor: 'pointer', color: '#333' }}
+          onClick={() => window.dispatchEvent(new CustomEvent('toggle-sidebar'))} />
         {company && (
           <Tag color={companyColor} style={{ borderRadius: 6, fontWeight: 600, fontSize: 13, padding: '2px 12px' }}>
             {company.name}

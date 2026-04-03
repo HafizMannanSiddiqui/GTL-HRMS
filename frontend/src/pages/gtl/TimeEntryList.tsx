@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Collapse, Select, Button, message, Popconfirm, Modal, Form, Input, DatePicker, Spin, Card, Row, Col, Statistic, Tag } from 'antd';
+import { Collapse, Select, Button, message, Popconfirm, Modal, Form, Input, DatePicker, Spin, Tag } from 'antd';
 import { DownloadOutlined, EditOutlined, DeleteOutlined, DownOutlined, FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import dayjs from 'dayjs';
@@ -99,9 +99,9 @@ export default function TimeEntryList() {
   const renderWeekTable = (week: any) => (
     <div>
       <div style={{ overflowX: 'auto' }}>
-        <table className="gtl-table" style={{ width: '100%', minWidth: 950, borderCollapse: 'collapse' }}>
+        <table className="gtl-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
+            <tr style={{ background: 'linear-gradient(135deg, var(--brand-primary-bg, #EBF5FB), var(--brand-primary-bg-light, #d4eaf7))', color: 'var(--brand-primary, #154360)' }}>
               <th style={{ width: 40, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>#</th>
               <th style={{ width: 100, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>User Name</th>
               <th style={{ width: 90, padding: '8px 12px', fontWeight: 600, fontSize: 13 }}>Date</th>
@@ -161,13 +161,12 @@ export default function TimeEntryList() {
   const collapseItems = (data?.weeks || []).map((week: any) => ({
     key: String(week.weekNumber),
     label: (
-      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-        <span style={{ fontWeight: 700, minWidth: 90 }}>Week# {String(week.weekNumber).padStart(2, '0')}:</span>
-        <span style={{ flex: 1 }}>
-          {dayjs(week.weekStart).format('DD MMM, YYYY')} - ({dayjs(week.weekStart).format('ddd')})
-          <strong> To </strong>
-          {dayjs(week.weekEnd).format('DD MMM, YYYY')} - ({dayjs(week.weekEnd).format('ddd')})
+      <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: 8, flexWrap: 'wrap' }}>
+        <Tag color="blue" style={{ fontWeight: 700, fontSize: 12 }}>W{String(week.weekNumber).padStart(2, '0')}</Tag>
+        <span style={{ fontSize: 13 }}>
+          {dayjs(week.weekStart).format('DD MMM')} — {dayjs(week.weekEnd).format('DD MMM YYYY')}
         </span>
+        <Tag style={{ marginLeft: 'auto', fontSize: 11 }}>{week.totalHours}h</Tag>
       </div>
     ),
     children: renderWeekTable(week),
@@ -187,7 +186,7 @@ export default function TimeEntryList() {
         <div className="page-title"><FileTextOutlined style={{ marginRight: 8 }} />Time Sheet</div>
         <div className="page-filters">
           {!isMyPage && (
-            <Select placeholder="Select Employee" showSearch optionFilterProp="label" style={{ width: 250 }}
+            <Select placeholder="Select Employee" showSearch optionFilterProp="label" style={{ width: '100%', maxWidth: 250 }}
               value={selectedUserId} onChange={setSelectedUserId}
               options={(allUsersData?.items || []).map((u: any) => ({ label: u.displayName || u.username, value: u.id }))} />
           )}
@@ -221,38 +220,31 @@ export default function TimeEntryList() {
         return null;
       })()}
 
-      {/* Summary Stats */}
+      {/* Summary Stats — brand themed */}
       {data && totalEntries > 0 && (
-        <Card size="small" style={{ borderRadius: 12, marginBottom: 16, border: '2px solid var(--brand-primary, #154360)' }}>
-          <Row gutter={16}>
-            <Col xs={8} md={4}>
-              <Statistic title="Total Hours" value={grandTotal}
-                prefix={<ClockCircleOutlined />}
-                valueStyle={{ color: 'var(--brand-primary)', fontSize: 22, fontWeight: 800 }} />
-            </Col>
-            <Col xs={8} md={4}>
-              <Statistic title="Entries" value={totalEntries}
-                valueStyle={{ fontSize: 22, fontWeight: 800 }} />
-            </Col>
-            <Col xs={8} md={4}>
-              <Statistic title="Weeks" value={weekCount}
-                valueStyle={{ fontSize: 22, fontWeight: 800 }} />
-            </Col>
-            <Col xs={8} md={4}>
-              <Statistic title="Avg/Week" value={`${avgPerWeek}h`}
-                valueStyle={{ color: avgPerWeek >= 40 ? '#52c41a' : '#fa8c16', fontSize: 20, fontWeight: 800 }} />
-            </Col>
-            <Col xs={8} md={4}>
-              <Statistic title="Approved" value={approvedCount}
-                prefix={<CheckCircleOutlined />}
-                valueStyle={{ color: '#52c41a', fontSize: 20, fontWeight: 800 }} />
-            </Col>
-            <Col xs={8} md={4}>
-              <Statistic title="Pending" value={pendingCount}
-                valueStyle={{ color: pendingCount > 0 ? '#fa8c16' : '#52c41a', fontSize: 20, fontWeight: 800 }} />
-            </Col>
-          </Row>
-        </Card>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+          {[
+            { label: 'Total Hours', value: grandTotal, icon: <ClockCircleOutlined /> },
+            { label: 'Entries', value: totalEntries },
+            { label: 'Weeks', value: weekCount },
+            { label: 'Avg/Week', value: `${avgPerWeek}h` },
+            { label: 'Approved', value: approvedCount, icon: <CheckCircleOutlined /> },
+            { label: 'Pending', value: pendingCount },
+          ].map(s => (
+            <div key={s.label} style={{
+              flex: '1 1 100px', padding: '14px 16px', borderRadius: 12,
+              background: 'linear-gradient(135deg, var(--brand-primary-bg), #fff)',
+              border: '1px solid var(--brand-primary-bg-light, #e8e8e8)',
+              borderLeft: '3px solid var(--brand-primary)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            }}>
+              <div style={{ fontSize: 11, color: 'var(--brand-primary)', marginBottom: 2, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, opacity: 0.7 }}>{s.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--brand-primary)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                {s.icon && <span style={{ fontSize: 16 }}>{s.icon}</span>}{s.value}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Content */}
@@ -277,13 +269,13 @@ export default function TimeEntryList() {
             className="timesheet-collapse"
             items={collapseItems}
             bordered={false}
-            expandIcon={({ isActive }) => <DownOutlined rotate={isActive ? 180 : 0} style={{ color: '#fff', fontSize: 12 }} />}
+            expandIcon={({ isActive }) => <DownOutlined rotate={isActive ? 180 : 0} style={{ color: 'var(--brand-primary, #154360)', fontSize: 12 }} />}
             expandIconPosition="end"
           />
           {/* Grand total */}
-          <div className="grand-total-row" style={{ display: 'flex', justifyContent: 'flex-end', gap: 20 }}>
-            <span>Total Hours:</span>
-            <span style={{ minWidth: 60 }}>{data?.grandTotal}</span>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, padding: '14px 16px', background: 'var(--brand-primary-bg, #f0f7ff)', borderRadius: 10, marginTop: 8 }}>
+            <span style={{ fontWeight: 600, fontSize: 15, color: '#333' }}>Total Hours:</span>
+            <span style={{ fontWeight: 800, fontSize: 15, color: 'var(--brand-primary)' }}>{data?.grandTotal}</span>
           </div>
         </>
       )}

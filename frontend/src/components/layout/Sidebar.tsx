@@ -36,72 +36,73 @@ export default function Sidebar({ collapsed, onCollapse }: Props) {
     { key: '/my/data-entry', icon: <EditOutlined />, label: 'Data Entry' },
 
     { type: 'divider' as const },
-    { key: 'hrms-label', type: 'group' as const, label: 'HRMS' },
-    { key: '/my/profile', icon: <ProfileOutlined />, label: 'Personal' },
-    { key: '/my/attendance', icon: <CalendarOutlined />, label: 'My Attendance' },
-    { key: '/my/leaves', icon: <ScheduleOutlined />, label: 'Leaves' },
-    { key: '/my/wfh', icon: <CalendarOutlined />, label: 'Work From Home' },
-    { key: '/my/attendance-requests', icon: <CalendarOutlined />, label: 'Attendance Requests' },
-    { key: '/my/weekend-assignments', icon: <CalendarOutlined />, label: 'Weekend Assignments' },
-    { key: '/my/holidays', icon: <CalendarOutlined />, label: 'Holidays' },
-    { key: '/my/team', icon: <TeamOutlined />, label: 'My Team' },
-    { key: '/my/directory', icon: <UserOutlined />, label: 'Directory' },
+    {
+      key: 'hrms', icon: <CalendarOutlined />, label: 'HRMS',
+      children: [
+        { key: '/my/profile', icon: <ProfileOutlined />, label: 'Personal' },
+        { key: '/my/attendance', icon: <CalendarOutlined />, label: 'My Attendance' },
+        { key: '/my/leaves', icon: <ScheduleOutlined />, label: 'Leaves' },
+        { key: '/my/wfh', icon: <CalendarOutlined />, label: 'Work From Home' },
+        { key: '/my/attendance-requests', icon: <CheckCircleOutlined />, label: 'Att. Requests' },
+        { key: '/my/weekend-assignments', icon: <CalendarOutlined />, label: 'Weekend' },
+        { key: '/my/holidays', icon: <CalendarOutlined />, label: 'Holidays' },
+        { key: '/my/team', icon: <TeamOutlined />, label: 'My Team' },
+        { key: '/my/directory', icon: <UserOutlined />, label: 'Directory' },
+      ],
+    },
 
     // ── LEAD SECTION (leads who are NOT admin) ──
     // Leads manage their reportees: approvals, insights, leaves, att requests
     ...(isLead && !isAdmin ? [
       { type: 'divider' as const },
-      { key: 'lead-label', type: 'group' as const, label: 'MY TEAM MANAGEMENT' },
-      { key: '/admin/approvals', icon: <CheckCircleOutlined />, label: 'Time Sheet Approval' },
-      { key: '/admin/lead-insights', icon: <BarChartOutlined />, label: 'My Team Dashboard' },
-      { key: '/admin/leaves/pending', icon: <ScheduleOutlined />, label: 'Leave Approvals' },
-      { key: '/admin/attendance-requests', icon: <CheckCircleOutlined />, label: 'Att. Requests' },
-      { key: '/admin/employee-management', icon: <UserOutlined />, label: 'Employee Mgmt' },
+      {
+        key: 'team-mgmt', icon: <TeamOutlined />, label: 'My Team',
+        children: [
+          { key: '/admin/approvals', icon: <CheckCircleOutlined />, label: 'Approvals' },
+          { key: '/admin/lead-insights', icon: <BarChartOutlined />, label: 'Dashboard' },
+          { key: '/admin/leaves/pending', icon: <ScheduleOutlined />, label: 'Leave Approvals' },
+          { key: '/admin/attendance-requests', icon: <CheckCircleOutlined />, label: 'Att. Requests' },
+          { key: '/admin/employee-management', icon: <UserOutlined />, label: 'Employee Mgmt' },
+        ],
+      },
     ] : []),
 
     // ── ADMIN SECTION ──
     // Admins are also leads — they get team management + system tools
     ...(isAdmin ? [
       { type: 'divider' as const },
-      { key: 'team-mgmt-label', type: 'group' as const, label: 'TEAM MANAGEMENT' },
-      { key: '/admin/approvals', icon: <CheckCircleOutlined />, label: 'Time Sheet Approval' },
-      { key: '/admin/lead-insights', icon: <BarChartOutlined />, label: 'Lead Insights' },
-      { key: '/admin/leaves/pending', icon: <ScheduleOutlined />, label: 'Leave Approvals' },
-      { key: '/admin/attendance-requests', icon: <CheckCircleOutlined />, label: 'Att. Requests' },
-      { key: '/admin/employee-management', icon: <UserOutlined />, label: 'Employee Mgmt' },
-      { key: '/admin/team-change-requests', icon: <CheckCircleOutlined />, label: 'Team Requests' },
-
-      { type: 'divider' as const },
-      { key: 'reports-label', type: 'group' as const, label: 'REPORTS' },
-      { key: '/admin/reports/team', icon: <TeamOutlined />, label: 'Team Report' },
-      { key: '/admin/reports/general', icon: <PieChartOutlined />, label: 'General Report' },
-      { key: '/admin/employees-report', icon: <BarChartOutlined />, label: 'Employees Report' },
-      { key: '/admin/attendance/daily', icon: <CalendarOutlined />, label: 'Daily Attendance' },
       {
-        key: 'resource', icon: <HeatMapOutlined />, label: 'Resource Allocation',
+        key: 'admin-team', icon: <CheckCircleOutlined />, label: 'Team Management',
         children: [
-          { key: '/admin/resource/resource-wise', icon: <UserOutlined />, label: 'Resource wise' },
-          { key: '/admin/resource/project-wise', icon: <FundProjectionScreenOutlined />, label: 'Project wise' },
+          { key: '/admin/approvals', icon: <CheckCircleOutlined />, label: 'Approvals' },
+          { key: '/admin/lead-insights', icon: <BarChartOutlined />, label: 'Lead Insights' },
+          { key: '/admin/leaves/pending', icon: <ScheduleOutlined />, label: 'Leave Approvals' },
+          { key: '/admin/attendance-requests', icon: <CheckCircleOutlined />, label: 'Att. Requests' },
+          { key: '/admin/employee-management', icon: <UserOutlined />, label: 'Employee Mgmt' },
+          { key: '/admin/team-change-requests', icon: <CheckCircleOutlined />, label: 'Team Requests' },
         ],
       },
-
-      { type: 'divider' as const },
-      { key: 'system-label', type: 'group' as const, label: 'SYSTEM' },
-      { key: '/admin/timesheet', icon: <FileTextOutlined />, label: 'All Timesheets' },
       {
-        key: 'people', icon: <TeamOutlined />, label: 'People',
+        key: 'admin-reports', icon: <BarChartOutlined />, label: 'Reports',
         children: [
+          { key: '/admin/reports/team', icon: <TeamOutlined />, label: 'Team Report' },
+          { key: '/admin/reports/general', icon: <PieChartOutlined />, label: 'General Report' },
+          { key: '/admin/employees-report', icon: <BarChartOutlined />, label: 'Employees' },
+          { key: '/admin/attendance/daily', icon: <CalendarOutlined />, label: 'Daily Attendance' },
+          { key: '/admin/resource/resource-wise', icon: <UserOutlined />, label: 'Resource Wise' },
+          { key: '/admin/resource/project-wise', icon: <FundProjectionScreenOutlined />, label: 'Project Wise' },
+        ],
+      },
+      {
+        key: 'admin-system', icon: <SettingOutlined />, label: 'System',
+        children: [
+          { key: '/admin/timesheet', icon: <FileTextOutlined />, label: 'All Timesheets' },
           { key: '/admin/users', icon: <UserOutlined />, label: 'Users' },
           { key: '/admin/ghost-employees', icon: <UserOutlined />, label: 'Ghost Employees' },
           { key: '/admin/cv-generator', icon: <ProfileOutlined />, label: 'CV Generator' },
           { key: '/my/blood-groups', icon: <HeartOutlined />, label: 'Blood Groups' },
-        ],
-      },
-      { key: '/admin/org-chart', icon: <ApartmentOutlined />, label: 'Org Chart' },
-      { key: '/admin/devices', icon: <SettingOutlined />, label: 'ZKTeco Devices' },
-      {
-        key: 'manage', icon: <SettingOutlined />, label: 'Manage',
-        children: [
+          { key: '/admin/org-chart', icon: <ApartmentOutlined />, label: 'Org Chart' },
+          { key: '/admin/devices', icon: <SettingOutlined />, label: 'ZKTeco Devices' },
           { key: '/admin/teams', icon: <TeamOutlined />, label: 'Teams' },
           { key: '/admin/programs', icon: <AppstoreOutlined />, label: 'Programs' },
           { key: '/admin/projects', icon: <ProjectOutlined />, label: 'Projects' },
@@ -116,10 +117,10 @@ export default function Sidebar({ collapsed, onCollapse }: Props) {
   ];
 
   const path = loc.pathname;
-  const openKeys = path.startsWith('/my/leaves') || path.startsWith('/my/apply') ? ['my-leaves']
-    : path.startsWith('/admin/resource') ? ['resource']
-    : path.startsWith('/admin/users') || path.startsWith('/admin/profiles') || path.startsWith('/admin/ghost') ? ['people']
-    : path.startsWith('/admin/team') || path.startsWith('/admin/program') || path.startsWith('/admin/project') || path.startsWith('/admin/sub') ? ['manage']
+  const openKeys = path.startsWith('/my/') ? ['hrms']
+    : path.startsWith('/admin/approvals') || path.startsWith('/admin/lead') || path.startsWith('/admin/leaves') || path.startsWith('/admin/attendance') || path.startsWith('/admin/employee') || path.startsWith('/admin/team-change') ? (isAdmin ? ['admin-team'] : ['team-mgmt'])
+    : path.startsWith('/admin/reports') || path.startsWith('/admin/employees-report') || path.startsWith('/admin/resource') ? ['admin-reports']
+    : path.startsWith('/admin/') ? ['admin-system']
     : [];
 
   // Company logo
@@ -134,7 +135,14 @@ export default function Sidebar({ collapsed, onCollapse }: Props) {
 
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={onCollapse} width={250}
-      style={{ overflow: 'auto', height: '100vh', position: 'sticky', top: 0, left: 0, background: 'var(--brand-sidebar, #001529)' }}>
+      collapsedWidth={window.innerWidth < 768 ? 0 : 80}
+      breakpoint="lg"
+      style={{
+        overflow: 'auto', height: '100vh',
+        position: window.innerWidth < 768 ? 'fixed' : 'sticky',
+        top: 0, left: 0, zIndex: 100,
+        background: 'var(--brand-sidebar, #001529)',
+      }}>
       <div style={{ height: 60, margin: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {logoSrc ? (
           <img src={logoSrc} alt="Logo"

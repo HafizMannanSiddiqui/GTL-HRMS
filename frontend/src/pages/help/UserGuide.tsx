@@ -21,7 +21,7 @@ export default function UserGuide() {
           <li>Write a <strong>Description</strong> of what you did</li>
           <li>Select <strong>WBS</strong> and click <strong>Submit</strong></li>
         </ol>
-        <Tag color="blue">Note: You can only log time for days you were present. Hours are fetched automatically from attendance.</Tag>
+        <div style={{ background: "#e6f7ff", border: "1px solid #91caff", borderRadius: 6, padding: "6px 10px", fontSize: 12, color: "#0958d9", marginTop: 8 }}>Note: You can only log time for days you were present. Hours are fetched automatically from attendance.</div>
       </div>
     )},
     { key: '2', label: 'How do I view my timesheet?', children: (

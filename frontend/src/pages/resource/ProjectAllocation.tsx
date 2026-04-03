@@ -11,7 +11,7 @@ function HeatCell({ value }: { value: number }) {
   const bg = value === 0 ? '#f5f5f5' : value >= 10 ? '#ff4d4f' : value >= 9 ? '#ff7a45' : value >= 8 ? '#fa8c16' : value >= 6 ? '#fadb14' : value >= 3 ? '#b7eb8f' : '#d9f7be';
   const color = value >= 9 ? '#fff' : '#262626';
   return (
-    <td style={{ background: bg, color, textAlign: 'center', padding: '2px 3px', fontSize: 11, fontWeight: value > 0 ? 600 : 400, minWidth: 26, border: '1px solid #f0f0f0' }}>
+    <td style={{ background: bg, color, textAlign: 'center', padding: '2px 3px', fontSize: 11, fontWeight: value > 0 ? 600 : 400, border: '1px solid #f0f0f0' }}>
       {value || ''}
     </td>
   );
@@ -44,11 +44,11 @@ export default function ProjectAllocation() {
           <Select value={month} onChange={setMonth} style={{ width: 140 }}
             options={months.map((m, i) => ({ label: m, value: i + 1 }))} />
           <Input prefix={<SearchOutlined />} placeholder="Search project or employee..."
-            allowClear onChange={e => setSearch(e.target.value)} style={{ width: 250 }} />
+            allowClear onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 250 }} />
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', marginBottom: 12, fontSize: 15, fontWeight: 600, color: '#154360' }}>
+      <div style={{ textAlign: 'center', marginBottom: 12, fontSize: 15, fontWeight: 600, color: 'var(--brand-primary, #154360)' }}>
         {months[month - 1]} {year} — {projects.length} projects
       </div>
 
@@ -60,8 +60,8 @@ export default function ProjectAllocation() {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                   <thead>
-                    <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
-                      <th style={{ padding: '4px 8px', textAlign: 'left', minWidth: 150, position: 'sticky', left: 0, background: 'var(--brand-primary, #154360)' }}>Employee</th>
+                    <tr style={{ background: 'linear-gradient(135deg, var(--brand-primary-bg, #EBF5FB), var(--brand-primary-bg-light, #d4eaf7))', color: 'var(--brand-primary, #154360)' }}>
+                      <th style={{ padding: '4px 8px', textAlign: 'left', position: 'sticky', left: 0, background: 'var(--brand-primary-bg, #EBF5FB)' }}>Employee</th>
                       {days.map(d => <th key={d} style={{ padding: '3px 3px', textAlign: 'center', fontSize: 11, minWidth: 26 }}>{String(d).padStart(2, '0')}</th>)}
                       <th style={{ padding: '4px 8px', textAlign: 'center' }}>Total</th>
                     </tr>
@@ -74,8 +74,8 @@ export default function ProjectAllocation() {
                         <td style={{ padding: '2px 8px', fontWeight: 700, textAlign: 'center', border: '1px solid #f0f0f0' }}>{u.total}</td>
                       </tr>
                     ))}
-                    <tr style={{ background: '#EBF5FB', fontWeight: 700 }}>
-                      <td style={{ padding: '4px 8px', border: '1px solid #f0f0f0', position: 'sticky', left: 0, background: '#EBF5FB' }}>Total</td>
+                    <tr style={{ background: 'var(--brand-primary-bg, #EBF5FB)', fontWeight: 700 }}>
+                      <td style={{ padding: '4px 8px', border: '1px solid #f0f0f0', position: 'sticky', left: 0, background: 'var(--brand-primary-bg, #EBF5FB)' }}>Total</td>
                       {days.map((_, i) => {
                         const dayTotal = proj.users.reduce((s: number, u: any) => s + (u.dailyHours[i] || 0), 0);
                         return <td key={i} style={{ textAlign: 'center', border: '1px solid #f0f0f0', fontSize: 11 }}>{dayTotal || ''}</td>;

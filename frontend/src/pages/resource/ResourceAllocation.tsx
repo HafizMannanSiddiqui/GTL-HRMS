@@ -11,14 +11,14 @@ function getBarColor(pct: number) {
   if (pct >= 100) return '#ff4d4f';
   if (pct >= 80) return '#fa8c16';
   if (pct >= 50) return '#52c41a';
-  return '#1677ff';
+  return 'var(--brand-primary, #154360)';
 }
 
 function HeatCell({ value }: { value: number }) {
   const bg = value === 0 ? '#f5f5f5' : value >= 9 ? '#ff4d4f' : value >= 8 ? '#fa8c16' : value >= 6 ? '#fadb14' : '#b7eb8f';
   const color = value >= 8 ? '#fff' : '#262626';
   return (
-    <td style={{ background: bg, color, textAlign: 'center', padding: '2px 4px', fontSize: 12, fontWeight: value > 0 ? 600 : 400, minWidth: 28, border: '1px solid #f0f0f0' }}>
+    <td style={{ background: bg, color, textAlign: 'center', padding: '2px 4px', fontSize: 12, fontWeight: value > 0 ? 600 : 400, border: '1px solid #f0f0f0' }}>
       {value || ''}
     </td>
   );
@@ -50,11 +50,11 @@ export default function ResourceAllocation() {
           <Select value={month} onChange={setMonth} style={{ width: 140 }}
             options={months.map((m, i) => ({ label: m, value: i + 1 }))} />
           <Input prefix={<SearchOutlined />} placeholder="Search employee..."
-            allowClear onChange={e => setSearch(e.target.value)} style={{ width: 220 }} />
+            allowClear onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 220 }} />
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', marginBottom: 12, fontSize: 15, fontWeight: 600, color: '#154360' }}>
+      <div style={{ textAlign: 'center', marginBottom: 12, fontSize: 15, fontWeight: 600, color: 'var(--brand-primary, #154360)' }}>
         {months[month - 1]} {year} — {users.length} employees
       </div>
 
@@ -76,7 +76,7 @@ export default function ResourceAllocation() {
                   <div style={{ overflowX: 'auto', marginTop: 4 }}>
                     <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                       <thead>
-                        <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
+                        <tr style={{ background: 'linear-gradient(135deg, var(--brand-primary-bg, #EBF5FB), var(--brand-primary-bg-light, #d4eaf7))', color: 'var(--brand-primary, #154360)' }}>
                           <th style={{ padding: '4px 8px', textAlign: 'left', minWidth: 100 }}>Team</th>
                           {days.map(d => <th key={d} style={{ padding: '4px 4px', textAlign: 'center', fontSize: 11, minWidth: 28 }}>{String(d).padStart(2, '0')}</th>)}
                           <th style={{ padding: '4px 8px', textAlign: 'center' }}>Total</th>

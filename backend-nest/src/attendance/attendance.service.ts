@@ -148,8 +148,14 @@ export class AttendanceService {
       : teamId ? `AND u.team_id = ${teamId}` : '';
     return this.prisma.$queryRawUnsafe<any[]>(`
       SELECT a.id, a.user_id as "userId", a.checkin_date as "checkinDate",
+             a.checkout_date as "checkoutDate",
              a.checkin_time::text as "checkinTime", a.checkout_time::text as "checkoutTime",
              a.checkin_state as "checkinState", a.status,
+             CASE WHEN a.checkout_time IS NOT NULL AND a.checkin_time IS NOT NULL THEN
+               ROUND(EXTRACT(EPOCH FROM (
+                 (COALESCE(a.checkout_date, a.checkin_date) + a.checkout_time) - (a.checkin_date + a.checkin_time)
+               )) / 60)
+             ELSE NULL END as "durationMinutes",
              json_build_object('username', u.username, 'displayName', u.display_name, 'teamId', u.team_id) as user
       FROM attendance a
       JOIN users u ON u.id = a.user_id
@@ -159,8 +165,14 @@ export class AttendanceService {
 
   async getMonthlyReport(userId: number, year: number, month: number) {
     return this.prisma.$queryRaw<any[]>`
-      SELECT id, checkin_date as "checkinDate", checkin_time::text as "checkinTime",
-             checkout_time::text as "checkoutTime", checkin_state as "checkinState", status
+      SELECT id, checkin_date as "checkinDate", checkout_date as "checkoutDate",
+             checkin_time::text as "checkinTime", checkout_time::text as "checkoutTime",
+             checkin_state as "checkinState", status,
+             CASE WHEN checkout_time IS NOT NULL AND checkin_time IS NOT NULL THEN
+               ROUND(EXTRACT(EPOCH FROM (
+                 (COALESCE(checkout_date, checkin_date) + checkout_time) - (checkin_date + checkin_time)
+               )) / 60)
+             ELSE NULL END as "durationMinutes"
       FROM attendance
       WHERE user_id = ${userId}
         AND EXTRACT(YEAR FROM checkin_date) = ${year}

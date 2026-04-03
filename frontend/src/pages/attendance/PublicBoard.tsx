@@ -52,7 +52,7 @@ export default function PublicBoard() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <Input prefix={<SearchOutlined />} placeholder="Search..." allowClear
-                onChange={e => setSearch(e.target.value)} style={{ width: 200 }} />
+                onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 200 }} />
               <div style={{ fontStyle: 'italic', color: '#555', fontSize: 14 }}>
                 {today.format('dddd, MMMM D, YYYY')}
               </div>

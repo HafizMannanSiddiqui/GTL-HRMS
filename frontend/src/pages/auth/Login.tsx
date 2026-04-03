@@ -59,13 +59,13 @@ export default function Login() {
   const greeting = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', margin: 0, padding: 0, overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexWrap: 'wrap', margin: 0, padding: 0, overflow: 'hidden' }}>
 
       {/* ====== LEFT — Gradient Branding ====== */}
-      <div style={{
+      <div className="login-brand-panel" style={{
         flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
         background: c.gradient, transition: 'background 0.8s ease', position: 'relative', overflow: 'hidden',
-        padding: 40, minHeight: '100vh',
+        padding: 40, minHeight: '100vh', minWidth: 300,
       }}>
         {/* Decorative shapes */}
         <div style={{ position: 'absolute', top: -80, left: -80, width: 350, height: 350, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
@@ -81,14 +81,14 @@ export default function Login() {
 
           <h1 style={{ fontSize: 42, fontWeight: 300, margin: 0, letterSpacing: 1, lineHeight: 1.2 }}>{greeting}</h1>
           <p style={{ fontSize: 15, opacity: 0.6, marginTop: 8, marginBottom: 48 }}>
-            Unified Time Logger & HR Management System
+            Time Logger & HR Management System
           </p>
 
-          {/* Clock */}
-          <div style={{ fontSize: 56, fontWeight: 200, fontFamily: "'Courier New', monospace", opacity: 0.8, letterSpacing: 4 }}>
+          {/* Clock — hidden on mobile via class */}
+          <div className="login-clock" style={{ fontSize: 56, fontWeight: 200, fontFamily: "'Courier New', monospace", opacity: 0.8, letterSpacing: 4 }}>
             {time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
           </div>
-          <div style={{ fontSize: 13, opacity: 0.4, marginTop: 8 }}>
+          <div className="login-clock" style={{ fontSize: 13, opacity: 0.4, marginTop: 8 }}>
             {time.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
 
@@ -112,8 +112,8 @@ export default function Login() {
       </div>
 
       {/* ====== RIGHT — Login Form ====== */}
-      <div style={{
-        width: 460, minHeight: '100vh', display: 'flex', flexDirection: 'column',
+      <div className="login-form-panel" style={{
+        width: 460, minWidth: 320, minHeight: '100vh', display: 'flex', flexDirection: 'column',
         justifyContent: 'center', background: '#fff', padding: '0 56px',
       }}>
         {/* Colored logo */}
@@ -152,15 +152,38 @@ export default function Login() {
           <a href="/forgot-password" style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Forgot Password?</a>
         </div>
         <div style={{ textAlign: 'center', marginTop: 24, color: '#ccc', fontSize: 11 }}>
-          Unified Portal v2.0
+          GTL & HRMS v1.0
         </div>
       </div>
 
-      {/* ====== Responsive: on mobile, hide left panel ====== */}
       <style>{`
+        @media (max-width: 900px) {
+          .login-brand-panel { min-height: auto !important; padding: 20px !important; flex: none !important; }
+          .login-brand-panel h1 { font-size: 24px !important; }
+          .login-form-panel { width: 100% !important; padding: 24px 28px !important; min-height: auto !important; flex: 1 !important; }
+        }
         @media (max-width: 768px) {
-          body > #root > div > div > div:first-child { display: none !important; }
-          body > #root > div > div > div:last-child { width: 100% !important; padding: 32px 24px !important; }
+          .login-brand-panel {
+            position: fixed !important; inset: 0 !important; min-height: 100vh !important;
+            min-width: 100% !important; z-index: 0 !important; padding: 0 !important;
+          }
+          .login-brand-panel > div { display: none !important; }
+          .login-clock { display: none !important; }
+          .login-form-panel {
+            position: relative !important; z-index: 1 !important;
+            width: 100% !important; min-height: 100vh !important;
+            padding: 24px !important;
+            background: rgba(255,255,255,0.92) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            display: flex !important; flex-direction: column !important; justify-content: center !important;
+          }
+          .login-form-panel > div:first-child {
+            text-align: center !important; margin-bottom: 24px !important;
+          }
+          .login-form-panel > div:first-child img { height: 50px !important; }
+          .login-form-panel h2 { text-align: center !important; }
+          .login-form-panel > p { text-align: center !important; }
         }
       `}</style>
     </div>

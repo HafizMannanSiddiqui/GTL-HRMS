@@ -124,7 +124,7 @@ export default function MyTeam() {
         </div>
         <div className="page-filters">
           <Input prefix={<SearchOutlined />} placeholder="Search name or role..." allowClear
-            onChange={e => setSearch(e.target.value)} style={{ width: 220 }} />
+            onChange={e => setSearch(e.target.value)} style={{ width: '100%', maxWidth: 220 }} />
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export default function MyTeam() {
                 <Tag color="purple" style={{ fontSize: 13, padding: '2px 10px' }}>{role}</Tag>
                 <span style={{ fontSize: 12, color: '#8c8c8c' }}>{grpMembers.length} member{grpMembers.length !== 1 ? 's' : ''}</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8 }}>
                 {grpMembers.sort((a: any, b: any) => (a.displayName || '').localeCompare(b.displayName || '')).map((u: any) => (
                   <div key={u.id} style={{
                     display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',

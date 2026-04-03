@@ -16,7 +16,7 @@ export default function Workstreams() {
     <div>
       <Typography.Title level={4}>Teamwise Workstreams</Typography.Title>
       <Space style={{ marginBottom: 16 }}>
-        <Select placeholder="Select Team" allowClear style={{ width: 250 }} onChange={setTeamId}
+        <Select placeholder="Select Team" allowClear style={{ width: '100%', maxWidth: 250 }} onChange={setTeamId}
           options={(teams || []).map((t: any) => ({ label: t.teamName, value: t.id }))} />
       </Space>
       <Table columns={[

@@ -32,7 +32,7 @@ export default function PendingLeaves() {
       <div className="page-heading">Pending Leave Requests ({(data || []).length})</div>
 
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', minWidth: 800, borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'var(--brand-primary, #154360)', color: '#fff' }}>
               <th style={{ padding: '8px 12px', fontWeight: 600, fontSize: 13, width: 40 }}>#</th>
